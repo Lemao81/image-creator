@@ -68,6 +68,10 @@ feature; a `plan.md` next to them breaks each issue into single-commit steps as 
 under their issue. "Move on with the plan" does exactly one step, ticks it and stops, without
 committing. See `docs/agents/issue-tracker.md`.
 
+### Domain docs
+
+Single-context: one `CONTEXT.md` and `docs/adr/` at the repo root, created lazily. See `docs/agents/domain.md`.
+
 ### Commits
 
 The repo includes a `commit-messages` skill (`.claude/skills/commit-messages/`, tracked in `skills-lock.json`). Use it whenever you commit. It enforces imperative, capitalized subjects, 72-character wrapping, a body that explains *why*, and atomic commits.
