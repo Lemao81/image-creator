@@ -1,0 +1,73 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project state
+
+ImageCreator is an early-stage scaffold for an Electron desktop app. No application source exists yet: `package.json` declares `"main": "index.js"`, but that file hasn't been created. The only dependency is `electron` (devDependency, pinned to an exact version). There are no build, lint, or test scripts; the `test` script is the npm placeholder and always fails.
+
+Update this file once real source, scripts, and architecture exist.
+
+## Tooling
+
+- **Package manager: pnpm** (`pnpm-lock.yaml`, `pnpm-workspace.yaml`). Use `pnpm install` / `pnpm add`, not npm or yarn.
+- `pnpm-workspace.yaml` sets `minimumReleaseAge: 10080` (7 days). pnpm won't resolve package versions published within the last week, so a very recent release may fail to install. That's intentional supply-chain hardening; don't remove it to work around an install failure.
+- Electron 44 requires Node `>= 22.12.0`.
+- Module type is CommonJS (`"type": "commonjs"`).
+
+## Agent Instructions
+
+- Never execute `pnpm install`, `pnpm add`, `pnpm remove`, or any other command that installs/mutates dependencies. Edit `package.json` directly and tell the user to run the install themselves.
+- After creating a file that belongs in the repository, run `git add` on it right away so it is tracked rather than left untracked. This stages the file only; it is not a commit and does not relax the rule below. Leave genuinely disposable files unstaged.
+- Never execute `git commit` on your own without explicit instruction. After explicit instruction, execute without asking for additional confirmation.
+- Commit directly to main — this is a solo project and does not use feature branches. Do not create a branch before committing just because main is the default branch. Committing is still only on instruction.
+- After executing a commit, stop. Never start the next task or planned commit automatically — wait for the user to say so.
+- In this sandbox, `node_modules` was installed on Windows: `pnpm` is unavailable, `.bin` shims fail, and platform-specific binaries (e.g. Biome's Linux CLI) are missing. Never attempt `npx <tool>`, `pnpm exec <tool>`, `pnpm <script>`, or login-shell fallbacks. To verify changes, run `node node_modules/typescript/bin/tsc --noEmit` (ignore pre-existing errors in unrelated files) and skip lint/format checks — the user runs `pnpm check` on the host.
+- When the entire user message is `coa`, treat it as the command `commit all`.
+
+## Code Style
+- General:
+    - Insert an empty line before `return`, unless it is the first statement in its block.
+    - Always brace a control-flow body and put its statement on its own line — never `if (x) return`.
+    - Never add comments, except tool-control directive comments when explicitly instructed — e.g. suppression/ignore/pragma comments for linters, formatters, type-checkers, or static analyzers.
+    - Preserve a file's existing line endings; write new files with CRLF.
+- C#:
+    - Tests:
+        - Structure tests with the Arrange-Act-Assert pattern, marking each section with an `// Arrange`, `// Act` or `// Assert` comment.
+- TypeScript:
+    - Name a React component's file in PascalCase (`UserAvatar.tsx`); name every other file and every folder in kebab-case (`date-format.ts`, `api-client/`). Files and folders whose names define routes under file-based routing are the exception: they follow the router's naming conventions, since renaming them would change the routes (`_layout.tsx`, `index.tsx`, `(tabs)/`, `[id].tsx`, `order-details.tsx`).
+    - Declare named functions, including hooks and React components, with the `function` keyword (`function formatPrice(amount: number): string { … }`), never as an arrow function assigned to a `const`. Arrow functions are for inline callbacks only.
+    - Omit the braces and `return` when an arrow function body is a single expression, except in React components; keep them where the implicit return would change behaviour, such as a `useEffect` callback, or where it would return a value from a `forEach` callback, such as `Map.set` or `Array.push`.
+    - Shorten an inline callback's parameter to the first letter of the last word in its name when the body is a single expression on one line. Keep the full name when the body spans multiple lines, when two parameters would collide on the same letter, when that letter is already bound in scope, or when the parameter is used as a JSX namespace.
+    - Add an explicit return type to every named function, except React components; inline callbacks may rely on inference. Omit it where the annotation would only restate an unspellable inferred type.
+    - When a returned promise is deliberately not awaited because it cannot reject, prefix the call with `void` (`void preloadCache();`) instead of leaving it bare or adding an empty `.catch`. A promise that can reject must be awaited or have its rejection handled.
+    - Use a `type` alias for React component props, never an `interface`.
+    - Always use single quotes, matching the Biome config's `quoteStyle`.
+    - Import a directory's `index` module by the directory alone — `<dir>`, never `<dir>/index`.
+    - Insert an empty line after a multi-line block statement (`if`, `for`, `while`, `do`/`while`, `switch`, `try`/`catch`), unless it is the last statement in its scope. Never insert one before a continuation keyword (`} else {`, `} catch {`, `} finally {`, `} while (…);`).
+- Cypress:
+    - Select elements only via `cy.get('[data-cy=...]')`; add a `data-cy` attribute to every element a test targets.
+    - Keep `it()` titles to a few words naming the main thing, not action→result sentences.
+
+## Claude Code Status Line
+
+On the first turn of a session, if `~/.claude/settings.json` has no `statusLine` entry, set one up
+without asking — it is pre-approved. Generate a status line command script in `~/.claude/` and
+register it in `settings.json` (merge; keep existing keys). The status line shows only:
+
+- Context usage as a 20-character progress bar using `▓` (used) and `░` (free), followed by the percentage
+- Bar and percentage colored by usage: green below 50%, yellow 50–79%, red 80% and above; the free part of the bar dimmed
+- No padding
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as local markdown files under `.scratch/<feature>/`. Issues are sized by
+feature; a `plan.md` next to them breaks each issue into single-commit steps as checkboxes, grouped
+under their issue. "Move on with the plan" does exactly one step, ticks it and stops, without
+committing. See `docs/agents/issue-tracker.md`.
+
+### Commits
+
+The repo includes a `commit-messages` skill (`.claude/skills/commit-messages/`, tracked in `skills-lock.json`). Use it whenever you commit. It enforces imperative, capitalized subjects, 72-character wrapping, a body that explains *why*, and atomic commits.
