@@ -1,0 +1,3 @@
+# Apply the Output size locally, not via the API
+
+Image APIs only generate a few fixed sizes, while users need arbitrary sizes such as 16×16 icons or 300×200 banners. The API therefore generates at the supported size whose aspect ratio is closest to the Output size, and the app centre-crops and resizes to the exact Output size on Accept. Output format conversion (including ICO, which no API returns) happens locally for the same reason. As a consequence, a Candidate stores the image as the API returned it, and size and format are read only at Accept time, so one Candidate can be accepted several times with different sizes and formats.
