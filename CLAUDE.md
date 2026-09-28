@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Most of this file is shared across projects. Apart from "Project state" and "Tooling", any technology it names (languages, frameworks, libraries, test tools, linters) only defines how to work *if* that technology is used; its mention is not a sign that this project uses it or should. When planning or choosing technologies for a feature, reason from the project's actual code, its requirements and the decisions made with the user, never from what this file happens to mention.
+
 ## Project state
 
 ImageCreator is an early-stage scaffold for an Electron desktop app. No application source exists yet: `package.json` declares `"main": "index.js"`, but that file hasn't been created. The only dependency is `electron` (devDependency, pinned to an exact version). There are no build, lint, or test scripts; the `test` script is the npm placeholder and always fails.
