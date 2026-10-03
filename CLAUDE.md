@@ -48,6 +48,8 @@ Update this file once real source, scripts, and architecture exist.
     - Always use single quotes, matching the Biome config's `quoteStyle`.
     - Import a directory's `index` module by the directory alone — `<dir>`, never `<dir>/index`.
     - Insert an empty line after a multi-line block statement (`if`, `for`, `while`, `do`/`while`, `switch`, `try`/`catch`), unless it is the last statement in its scope. Never insert one before a continuation keyword (`} else {`, `} catch {`, `} finally {`, `} while (…);`).
+- package.json:
+    - Prefix every added script name with a short tag for the tool it runs, followed by a colon (`bm:check`, `db:migrate`, `docker:up`). Scripts for the core build toolchain and for tests keep plain names (`start`, `typecheck`, `test:e2e`).
 - Cypress:
     - Select elements only via `cy.get('[data-cy=...]')`; add a `data-cy` attribute to every element a test targets.
     - Keep `it()` titles to a few words naming the main thing, not action→result sentences.
