@@ -9,3 +9,5 @@ obj/
 *.DotSettings.user
 /ios
 /android
+.vite/
+out/

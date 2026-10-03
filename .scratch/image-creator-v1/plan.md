@@ -2,7 +2,7 @@
 
 ## [01 Scaffold and end-to-end harness](issues/01-scaffold-and-e2e-harness.md)
 
-- [ ] 1.1 📦 Add Electron Forge with Vite and TypeScript and a context-isolated window
+- [x] 1.1 📦 Add Electron Forge with Vite and TypeScript and a context-isolated window
 - [ ] 1.2 📦 Render an empty main view with React
 - [ ] 1.3 📦 Add Biome configuration and the check script
 - [ ] 1.4 📦 Add the Playwright harness, fake image API server and launch test

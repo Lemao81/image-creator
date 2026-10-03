@@ -24,4 +24,4 @@
 
 ## Open decisions (ask the user before starting)
 
-- Windows installer maker: Squirrel (Forge default, per-user, auto-update friendly) or WiX/MSI?
+- Windows installer maker: Squirrel (Forge default, per-user, auto-update friendly) or WiX/MSI? **Answer:** Squirrel.
