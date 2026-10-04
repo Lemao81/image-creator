@@ -11,3 +11,5 @@ obj/
 /android
 .vite/
 out/
+test-results/
+playwright-report/

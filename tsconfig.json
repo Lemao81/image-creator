@@ -13,5 +13,12 @@
     "resolveJsonModule": true,
     "skipLibCheck": true
   },
-  "include": ["src", "forge.config.ts", "forge.env.d.ts", "vite.*.config.mts"]
+  "include": [
+    "src",
+    "tests",
+    "forge.config.ts",
+    "forge.env.d.ts",
+    "playwright.config.ts",
+    "vite.*.config.mts"
+  ]
 }
