@@ -15,10 +15,5 @@
       "quoteStyle": "single",
       "semicolons": "asNeeded"
     }
-  },
-  "linter": {
-    "rules": {
-      "recommended": true
-    }
   }
 }
