@@ -8,12 +8,11 @@ This file is shared across projects. Apart from current project descriptions, an
 
 ## Agent Instructions
 
-- Never execute `pnpm install`, `pnpm add`, `pnpm remove`, or any other command that installs/mutates dependencies. Edit `package.json` directly and tell the user to run the install themselves.
+- `node_modules` is installed on the Windows host and shared with this sandbox; that install also fetches the Linux native binaries. Never run `pnpm`, `npx` or any install command here; call tools via `node_modules/.bin/<tool>`. To change dependencies, edit `package.json` and tell the user to run the install.
 - After creating a file that belongs in the repository, run `git add` on it right away so it is tracked rather than left untracked. This stages the file only; it is not a commit and does not relax the rule below. Leave genuinely disposable files unstaged.
 - Never execute `git commit` on your own without explicit instruction. After explicit instruction, execute without asking for additional confirmation.
 - Commit directly to main — this is a solo project and does not use feature branches. Do not create a branch before committing just because main is the default branch. Committing is still only on instruction.
 - After executing a commit, stop. Never start the next task or planned commit automatically — wait for the user to say so.
-- In this sandbox, `node_modules` was installed on Windows: `pnpm` is unavailable, `.bin` shims fail, and platform-specific binaries (e.g. Biome's Linux CLI) are missing. Never attempt `npx <tool>`, `pnpm exec <tool>`, `pnpm <script>`, or login-shell fallbacks. To verify changes, run `node node_modules/typescript/bin/tsc --noEmit` (ignore pre-existing errors in unrelated files) and skip lint/format checks — the user runs `pnpm check` on the host.
 - When the entire user message is `coa`, treat it as the command `commit all`.
 - When the entire user message is `moveon`, treat it as the command "Move on with the plan".
 
