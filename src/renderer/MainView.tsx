@@ -1,3 +1,3 @@
 export function MainView() {
-  return <main />;
+  return <main />
 }

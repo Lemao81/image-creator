@@ -1,1 +1,1 @@
-export type Bridge = Record<string, never>;
+export type Bridge = Record<string, never>

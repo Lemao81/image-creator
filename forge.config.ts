@@ -1,8 +1,8 @@
-import { MakerSquirrel } from '@electron-forge/maker-squirrel';
-import { FusesPlugin } from '@electron-forge/plugin-fuses';
-import { VitePlugin } from '@electron-forge/plugin-vite';
-import type { ForgeConfig } from '@electron-forge/shared-types';
-import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import { FuseV1Options, FuseVersion } from '@electron/fuses'
+import { MakerSquirrel } from '@electron-forge/maker-squirrel'
+import { FusesPlugin } from '@electron-forge/plugin-fuses'
+import { VitePlugin } from '@electron-forge/plugin-vite'
+import type { ForgeConfig } from '@electron-forge/shared-types'
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -41,6 +41,6 @@ const config: ForgeConfig = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
-};
+}
 
-export default config;
+export default config
