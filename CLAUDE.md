@@ -1,21 +1,10 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 Most of this file is shared across projects. Apart from "Project state" and "Tooling", any technology it names (languages, frameworks, libraries, test tools, linters) only defines how to work *if* that technology is used; its mention is not a sign that this project uses it or should. When planning or choosing technologies for a feature, reason from the project's actual code, its requirements and the decisions made with the user, never from what this file happens to mention.
-
-## Project state
-
-ImageCreator is an early-stage scaffold for an Electron desktop app. No application source exists yet: `package.json` declares `"main": "index.js"`, but that file hasn't been created. The only dependency is `electron` (devDependency, pinned to an exact version). There are no build, lint, or test scripts; the `test` script is the npm placeholder and always fails.
-
-Update this file once real source, scripts, and architecture exist.
 
 ## Tooling
 
-- **Package manager: pnpm** (`pnpm-lock.yaml`, `pnpm-workspace.yaml`). Use `pnpm install` / `pnpm add`, not npm or yarn.
-- `pnpm-workspace.yaml` sets `minimumReleaseAge: 10080` (7 days). pnpm won't resolve package versions published within the last week, so a very recent release may fail to install. That's intentional supply-chain hardening; don't remove it to work around an install failure.
-- Electron 44 requires Node `>= 22.12.0`.
-- Module type is CommonJS (`"type": "commonjs"`).
+- Use pnpm as frontend package manager (`pnpm-lock.yaml`, `pnpm-workspace.yaml`).
 
 ## Agent Instructions
 
@@ -29,6 +18,7 @@ Update this file once real source, scripts, and architecture exist.
 - When the entire user message is `moveon`, treat it as the command "Move on with the plan".
 
 ## Code Style
+
 - General:
     - Insert an empty line before `return`, unless it is the first statement in its block.
     - Always brace a control-flow body and put its statement on its own line — never `if (x) return`.
@@ -37,17 +27,6 @@ Update this file once real source, scripts, and architecture exist.
 - C#:
     - Tests:
         - Structure tests with the Arrange-Act-Assert pattern, marking each section with an `// Arrange`, `// Act` or `// Assert` comment.
-- TypeScript:
-    - Name a React component's file in PascalCase (`UserAvatar.tsx`); name every other file and every folder in kebab-case (`date-format.ts`, `api-client/`). Files and folders whose names define routes under file-based routing are the exception: they follow the router's naming conventions, since renaming them would change the routes (`_layout.tsx`, `index.tsx`, `(tabs)/`, `[id].tsx`, `order-details.tsx`).
-    - Declare named functions, including hooks and React components, with the `function` keyword (`function formatPrice(amount: number): string { … }`), never as an arrow function assigned to a `const`. Arrow functions are for inline callbacks only.
-    - Omit the braces and `return` when an arrow function body is a single expression, except in React components; keep them where the implicit return would change behaviour, such as a `useEffect` callback, or where it would return a value from a `forEach` callback, such as `Map.set` or `Array.push`.
-    - Shorten an inline callback's parameter to the first letter of the last word in its name when the body is a single expression on one line. Keep the full name when the body spans multiple lines, when two parameters would collide on the same letter, when that letter is already bound in scope, or when the parameter is used as a JSX namespace.
-    - Add an explicit return type to every named function, except React components; inline callbacks may rely on inference. Omit it where the annotation would only restate an unspellable inferred type.
-    - When a returned promise is deliberately not awaited because it cannot reject, prefix the call with `void` (`void preloadCache();`) instead of leaving it bare or adding an empty `.catch`. A promise that can reject must be awaited or have its rejection handled.
-    - Use a `type` alias for React component props, never an `interface`.
-    - Always use single quotes, matching the Biome config's `quoteStyle`.
-    - Import a directory's `index` module by the directory alone — `<dir>`, never `<dir>/index`.
-    - Insert an empty line after a multi-line block statement (`if`, `for`, `while`, `do`/`while`, `switch`, `try`/`catch`), unless it is the last statement in its scope. Never insert one before a continuation keyword (`} else {`, `} catch {`, `} finally {`, `} while (…);`).
 - package.json:
     - Prefix every added script name with a short tag for the tool it runs, followed by a colon (`bm:check`, `db:migrate`, `docker:up`). Scripts for the core build toolchain and for tests keep plain names (`start`, `typecheck`, `test:e2e`).
 - Cypress:
@@ -56,13 +35,9 @@ Update this file once real source, scripts, and architecture exist.
 - Markdown:
     - Never hard-wrap text. Write each paragraph, bullet point or table cell as one line, however long, and leave wrapping to the viewer. Line breaks belong only between separate elements (paragraphs, list items, headings, code blocks).
 
-## Claude Code Status Line
+## TypeScript Code Style
 
-On the first turn of a session, if `~/.claude/settings.json` has no `statusLine` entry, set one up without asking — it is pre-approved. Generate a status line command script in `~/.claude/` and register it in `settings.json` (merge; keep existing keys). The status line shows only:
-
-- Context usage as a 20-character progress bar using `▓` (used) and `░` (free), followed by the percentage
-- Bar and percentage colored by usage: green below 50%, yellow 50–79%, red 80% and above; the free part of the bar dimmed
-- No padding
+Reference `docs/references/typescript-code-style.md` for detailed TypeScript code style guide.
 
 ## Agent skills
 
