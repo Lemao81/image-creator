@@ -9,7 +9,7 @@
 
 ## [02 Provider settings](issues/02-provider-settings.md)
 
-- [ ] 2.1 Add the settings store with the encrypted API key
+- [x] 2.1 Add the settings store with the encrypted API key
 - [ ] 2.2 Add the settings view with icon button, back arrow and Save
 - [ ] 2.3 Open the settings view on first run
 
