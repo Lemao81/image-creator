@@ -19,6 +19,9 @@
   "author": "lemao81",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": "<25"
+  },
   "dependencies": {
     "electron-squirrel-startup": "1.0.1",
     "react": "19.3.0",
