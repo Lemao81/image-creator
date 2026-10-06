@@ -16,5 +16,6 @@
 ## Steps
 
 1. Add the settings store in the main process with the encrypted API key, exposed through the preload bridge.
-2. Add the settings view with icon button, back arrow and Save, with end-to-end tests.
-3. Open the settings view on first run, with an end-to-end test.
+2. Add shadcn/ui with Tailwind to the renderer, so every view is built from its components.
+3. Add the settings view with icon button, back arrow and Save, with end-to-end tests.
+4. Open the settings view on first run, with an end-to-end test.

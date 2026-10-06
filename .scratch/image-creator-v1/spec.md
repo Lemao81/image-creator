@@ -86,7 +86,7 @@ A desktop app where the user describes an image in a Prompt, picks the Output si
 
 ## Implementation Decisions
 
-- **Stack**: Electron Forge with the Vite plugin, TypeScript, React in the renderer. Biome for lint and format.
+- **Stack**: Electron Forge with the Vite plugin, TypeScript, React in the renderer. The UI is built from shadcn/ui components on Base UI, styled with Tailwind CSS v4. Biome for lint and format.
 - **Process split**: all API calls, file writes, dialogs and persistence run in the main process. The renderer is sandboxed with context isolation and no node integration, and talks to the main process only through a narrow, typed preload bridge. The API key never reaches the renderer; the renderer only learns whether a key is set.
 - **Preload bridge surface**: roughly these operations: load and save Provider settings; test the connection; start a Generation and cancel it; Accept a Candidate with an Output size and Output format; load and save the remembered main-view preferences.
 - **Provider** (ADR 0001): a small provider interface with a single implementation for the OpenAI-compatible Images protocol. Generation calls the image-generation endpoint under the configured base URL with the Prompt, model, chosen generation size and background option, and asks for base64 image data. Test connection calls the models endpoint. Requests are abortable for Cancel.

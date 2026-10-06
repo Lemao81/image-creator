@@ -10,8 +10,9 @@
 ## [02 Provider settings](issues/02-provider-settings.md)
 
 - [x] 2.1 Add the settings store with the encrypted API key
-- [ ] 2.2 Add the settings view with icon button, back arrow and Save
-- [ ] 2.3 Open the settings view on first run
+- [x] 2.2 📦 Add shadcn/ui with Tailwind to the renderer
+- [ ] 2.3 Add the settings view with icon button, back arrow and Save
+- [ ] 2.4 Open the settings view on first run
 
 ## [03 Generate and Accept tracer bullet](issues/03-generate-and-accept-tracer-bullet.md)
 
