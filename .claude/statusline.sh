@@ -62,12 +62,15 @@ color_for() {
 
 limits=""
 while IFS=$'\t' read -r label used; do
-  used=${used%.*}
-  limits+=" ${sep} ${label}: $(color_for "$used")${used}%${reset}"
+  if [[ -n $used ]]; then
+    used=${used%.*}
+    limits+=" ${sep} ${label}: $(color_for "$used")${used}%${reset}"
+  else
+    limits+=" ${sep} ${label}: ${dim}–${reset}"
+  fi
 done < <(printf '%s' "$input" | jq -r '
   [["5h", .rate_limits.five_hour], ["7d", .rate_limits.seven_day]][]
-  | select(.[1].used_percentage != null)
-  | [.[0], (.[1].used_percentage | tostring)]
+  | [.[0], (.[1].used_percentage // "" | tostring)]
   | @tsv' 2>/dev/null)
 
 dir=$(printf '%s' "$input" | jq -r '.workspace.current_dir // .cwd // empty' 2>/dev/null)
