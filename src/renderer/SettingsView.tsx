@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, CircleAlertIcon } from 'lucide-react'
-import { type FormEvent, useEffect, useState } from 'react'
+import { type SubmitEvent, useEffect, useState } from 'react'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -46,7 +46,7 @@ export function SettingsView({ onBack }: SettingsViewProps) {
     setSaved(false)
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setError(null)
     try {

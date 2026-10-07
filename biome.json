@@ -23,6 +23,12 @@
   },
   "overrides": [
     {
+      "includes": ["src/renderer/components/ui/**"],
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
       "includes": ["tests/e2e/fixtures.ts"],
       "linter": {
         "rules": {

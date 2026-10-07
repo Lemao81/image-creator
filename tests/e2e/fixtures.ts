@@ -14,9 +14,14 @@ type Fixtures = {
   userDataDir: string
   app: ElectronApplication
   window: Page
+  relaunch: () => Promise<Page>
 }
 
 const appRoot = path.join(__dirname, '..', '..')
+
+function launchApp(userDataDir: string): Promise<ElectronApplication> {
+  return electron.launch({ args: [appRoot, `--user-data-dir=${userDataDir}`] })
+}
 
 export const test = base.extend<Fixtures>({
   fakeImageApi: async ({}, use) => {
@@ -30,12 +35,22 @@ export const test = base.extend<Fixtures>({
     await rm(directory, { recursive: true, force: true })
   },
   app: async ({ userDataDir }, use) => {
-    const app = await electron.launch({ args: [appRoot, `--user-data-dir=${userDataDir}`] })
+    const app = await launchApp(userDataDir)
     await use(app)
     await app.close()
   },
   window: async ({ app }, use) => {
     await use(await app.firstWindow())
+  },
+  relaunch: async ({ app, userDataDir }, use) => {
+    let current = app
+    await use(async () => {
+      await current.close()
+      current = await launchApp(userDataDir)
+
+      return current.firstWindow()
+    })
+    await current.close()
   },
 })
 
