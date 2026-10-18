@@ -10,6 +10,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "test:e2e": "electron-forge package && playwright test",
+    "prepare": "git config core.hooksPath .githooks",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "es:lint": "eslint .",
