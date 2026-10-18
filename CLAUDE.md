@@ -1,6 +1,6 @@
-# CLAUDE.md
+## General Notes
 
-This file is shared across projects. Apart from current project descriptions, any technology it names only defines how to work if that technology is used; its mention is not a sign that this project uses it or should. Feature planning should reason from the actual code, its requirements and the decisions made with the user.
+This file is shared across projects. Apart from current project descriptions, any technology it names only defines how to work *if* that technology is used; its mention is not a sign that this project uses it or should. Feature planning should reason from the actual code, its requirements and the decisions made with the user.
 
 ## Tooling
 
@@ -8,63 +8,48 @@ This file is shared across projects. Apart from current project descriptions, an
 
 ## Agent Instructions
 
-- `node_modules` is installed on the Windows host and shared with this sandbox; that install also fetches the Linux native binaries. Never run `pnpm`, `npx`, `electron`, `electron-forge` or any install command here; call tools via `node_modules/.bin/<tool>`. To change dependencies, edit `package.json` and tell the user to run the install.
-- If the project uses Biome: whenever you have edited files it checks, run `biome check --write` before handing back to the user, and fix whatever it still reports in the code; never silence a finding by suppression or by changing `biome.json` without asking.
-- If the project uses shadcn/ui: never write component code yourself; to add or update components, give the user the `pnpm shadcn add <components>` command (with `--overwrite` for updates, naming any local edits it discards, since formatting makes `--diff` useless) and wait until they have run it. Then format the files and stage them by explicit path. Read-only CLI calls (`docs`, `search`, `view`, `--dry-run`) are fine.
-- After creating a file that belongs in the repository, run `git add` on it right away so it is tracked rather than left untracked. This stages the file only; it is not a commit and does not relax the rule below. Leave genuinely disposable files unstaged.
-- Never execute `git commit` on your own without explicit instruction. After explicit instruction, execute without asking for additional confirmation.
-- Commit directly to main — this is a solo project and does not use feature branches. Do not create a branch before committing just because main is the default branch. Committing is still only on instruction.
+- In this sandbox, tools run from its own Linux `node_modules`, bind-mounted over the repo's shared one. Before the first tool run of a session, check `mountpoint -q node_modules`; when it fails, set the sandbox up per `docs/references/sandbox-node-modules.md` first.
+- Run pnpm here only on the mounted `node_modules`, and install only with `pnpm install --frozen-lockfile`. To change dependencies, edit `package.json` and tell the user to run the install on the host; run the frozen install here too whenever the user reports an install on the host, or `[ pnpm-lock.yaml -nt node_modules/.modules.yaml ]` holds before a tool run.
+- Leave `electron` and `electron-forge` to the host.
+- If the project uses Biome: whenever you have edited files it checks, run `biome check --write` before handing back to the user.
+- Fix every finding a check reports, whether from your own run or a failed pre-commit hook, in the code; after a hook failure, re-stage and retry the commit. Ask first before a suppression comment, a linter config change, `--no-verify`, a fix that changes behaviour, or an edit to files outside the commit.
+- When a commit prints that a hook `was ignored because it's not set as executable`, run `chmod +x` on that hook, then `git hook run <hook>` to check the commit it skipped, and report both to the user.
+- Never execute `git commit` on your own without explicit instruction. After explicit instruction, commit directly to main — this is a solo project and does not use feature branches.
 - After executing a commit, stop. Never start the next task or planned commit automatically — wait for the user to say so.
+- After creating a file that belongs in the repository, run `git add` on it right away so it is tracked rather than left untracked.
 - When the entire user message is `coa`, treat it as the command `commit all`.
 - When the entire user message is `moveon`, treat it as the command "Move on with the plan".
+- When asked to print your last response to answers (`print last response to answers`), append that response as Markdown to `ANSWERS.md` in the repo root. Start the entry with a line holding the current timestamp (`## YYYY-MM-DD HH:MM`).
 
 ## Code Style
 
 - General:
-    - Insert an empty line before `return`, unless it is the first statement in its block.
-    - Always brace a control-flow body and put its statement on its own line — never `if (x) return`.
     - Never add comments, except tool-control directive comments when explicitly instructed — e.g. suppression/ignore/pragma comments for linters, formatters, type-checkers, or static analyzers.
-    - Preserve a file's existing line endings; write new files with CRLF.
-- C#:
-    - Tests:
-        - Structure tests with the Arrange-Act-Assert pattern, marking each section with an `// Arrange`, `// Act` or `// Assert` comment.
 - package.json:
-    - Prefix every added script name with a short tag for the tool it runs, followed by a colon (`bm:check`, `db:migrate`, `docker:up`). Scripts for the core build toolchain and for tests keep plain names (`start`, `typecheck`, `test:e2e`).
-- Cypress:
-    - Select elements only via `cy.get('[data-cy=...]')`; add a `data-cy` attribute to every element a test targets.
-    - Keep `it()` titles to a few words naming the main thing, not action→result sentences.
+    - Prefix script names with a short tag for the tool it runs, followed by a colon (`bm:check`, `db:migrate`, `docker:up`). Scripts for the core build toolchain and for tests keep plain names (`start`, `typecheck`, `test:e2e`).
 - Markdown:
     - Never hard-wrap text. Write each paragraph, bullet point or table cell as one line, however long, and leave wrapping to the viewer. Line breaks belong only between separate elements (paragraphs, list items, headings, code blocks).
 
-## TypeScript Code Style
+## References
 
-Reference `docs/references/typescript-code-style.md` for detailed TypeScript code style guide.
+- Writing TypeScript → read `docs/references/typescript-code-style.md` first.
+- Writing C# → read `docs/references/csharp-code-style.md` first.
+- Writing Cypress tests → read `docs/references/cypress-tests.md` first.
+- Working with shadcn/ui → read `docs/references/shadcn.md` first.
+- Adding or changing an API endpoint → read `docs/references/api-endpoints.md` first.
+- Starting a feature or writing its issues and plan → read `docs/references/feature-start-issue-tracker.md` first.
+- Moving on with the plan → read `docs/references/move-on-with-the-plan.md` first.
 
 ## Agent skills
 
-### Starting a feature
+### Agent documents
 
-1. `/grill-with-docs <idea>`: answer the numbered question rounds until every decision is settled. Resolved terms go into `GLOSSARY.md`, decisions that are hard to reverse into `docs/adr/`.
-2. `/to-spec`: confirm the proposed test seams; the conversation becomes `.scratch/<feature>/spec.md`.
-3. `/to-tickets`: approve the tracer-bullet breakdown; it becomes one issue file per ticket with its blockers, and `plan.md` is written alongside (see below).
-4. "Move on with the plan" implements it step by step.
+Before editing CLAUDE.md, AGENTS.md, a skill, or a doc one of them points to, load `writing-for-agents`.
 
-Each stage is committed only when the user says so.
+### Commits
 
-### Issue tracker
-
-Issues, specs and plans live as local markdown files under `.scratch/<feature>/`; details in `docs/agents/issue-tracker.md`.
-
-- Issues are sized by feature, never shrunk to fit one commit. Each has acceptance criteria and lists its work as numbered `## Steps`; one step is exactly one commit.
-- `plan.md` has one heading per issue, linking its file, with its steps below as checkboxes (`- [ ] 1.1 Step title`) in execution order. 📦 marks a step that edits `package.json`; the user runs `pnpm install` before reviewing it.
-- Decisions that must wait until work starts go under `## Open decisions (ask the user before starting)`.
-- "Move on with the plan": take the next unticked step. At an issue's first step, ask its open decisions first and record the answers in the issue. Do only that step, tick it and stop without committing; the step and its tick are committed together on instruction. Set the issue's `Status:` to `resolved` when its last step is ticked.
-- After committing a plan step, end with a code block of `🟢 Finished: <step>` and `🟡 Next:     <next unticked step, or none>`, steps as number and title, values aligned.
+Before committing, load `commit-messages`.
 
 ### Domain docs
 
 Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root, created lazily. See `docs/agents/domain.md`.
-
-### Commits
-
-The repo includes a `commit-messages` skill (`.claude/skills/commit-messages/`, tracked in `skills-lock.json`). Use it whenever you commit. It enforces imperative, capitalized subjects, 72-character wrapping, a body that explains *why*, and atomic commits.
