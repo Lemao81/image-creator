@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, CircleAlertIcon } from 'lucide-react'
-import { type SubmitEvent, useEffect, useState } from 'react'
+import { type JSX, type SubmitEvent, useEffect, useState } from 'react'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -13,7 +13,7 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
 }
 
-export function SettingsView({ onBack }: SettingsViewProps) {
+export function SettingsView({ onBack }: SettingsViewProps): JSX.Element {
   const [loaded, setLoaded] = useState(false)
   const [baseUrl, setBaseUrl] = useState('')
   const [apiKey, setApiKey] = useState('')

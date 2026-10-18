@@ -53,6 +53,7 @@ export async function saveProviderSettings(
       ? encryptApiKey(update.apiKey)
       : settings.provider?.encryptedApiKey,
   }
+
   await writeSettings({ ...settings, provider })
 
   return toProviderSettings(provider)

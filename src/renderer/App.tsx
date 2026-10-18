@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { type JSX, useState } from 'react'
 import { MainView } from './pages/MainView'
 import { SettingsView } from './pages/SettingsView'
 
 type View = 'main' | 'settings'
 
-export function App() {
+export function App(): JSX.Element {
   const [view, setView] = useState<View>('main')
 
   if (view === 'settings') {

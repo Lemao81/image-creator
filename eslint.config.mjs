@@ -3,7 +3,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig([
-  globalIgnores(['dist/', 'src/theme/eject/']),
+  globalIgnores(['dist/', 'src/theme/eject/', 'src/renderer/components/ui/']),
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
     languageOptions: { parser: tseslint.parser, parserOptions: { projectService: true } },

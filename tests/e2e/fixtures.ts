@@ -50,6 +50,7 @@ export const test = base.extend<Fixtures>({
 
       return current.firstWindow()
     })
+
     await current.close()
   },
 })
