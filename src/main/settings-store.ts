@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { app, safeStorage } from 'electron'
 import type { ProviderSettings, ProviderSettingsUpdate } from '../shared/types'
-import type { StoredProviderSettings, StoredSettings } from './types'
+import type { DecryptedProviderSettings, StoredProviderSettings, StoredSettings } from './types'
 
 function settingsFilePath(): string {
   return path.join(app.getPath('userData'), 'settings.json')
@@ -28,6 +28,10 @@ function encryptApiKey(apiKey: string): string {
   return safeStorage.encryptString(apiKey).toString('base64')
 }
 
+function decryptApiKey(encryptedApiKey: string): string {
+  return safeStorage.decryptString(Buffer.from(encryptedApiKey, 'base64'))
+}
+
 function toProviderSettings(stored: StoredProviderSettings): ProviderSettings {
   return {
     baseUrl: stored.baseUrl,
@@ -40,6 +44,19 @@ export async function loadProviderSettings(): Promise<ProviderSettings | null> {
   const { provider } = await readSettings()
 
   return provider ? toProviderSettings(provider) : null
+}
+
+export async function loadDecryptedProviderSettings(): Promise<DecryptedProviderSettings> {
+  const { provider } = await readSettings()
+  if (!provider) {
+    throw new Error('No Provider settings saved')
+  }
+
+  return {
+    baseUrl: provider.baseUrl,
+    model: provider.model,
+    apiKey: provider.encryptedApiKey ? decryptApiKey(provider.encryptedApiKey) : '',
+  }
 }
 
 export async function saveProviderSettings(

@@ -9,3 +9,8 @@ export type ProviderSettingsUpdate = {
   model: string
   apiKey: string
 }
+
+export type Candidate = {
+  image: Uint8Array
+  prompt: string
+}

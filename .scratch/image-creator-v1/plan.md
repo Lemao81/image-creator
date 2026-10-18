@@ -16,7 +16,7 @@
 
 ## [03 Generate and Accept tracer bullet](issues/03-generate-and-accept-tracer-bullet.md)
 
-- [ ] 3.1 Add the provider interface and OpenAI-compatible Generation
+- [x] 3.1 Add the provider interface and OpenAI-compatible Generation
 - [ ] 3.2 Add the Prompt input, Generate button and preview
 - [ ] 3.3 Add Accept writing the Candidate through the Save dialog
 
