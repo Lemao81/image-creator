@@ -47,12 +47,6 @@
   },
   "overrides": [
     {
-      "includes": ["src/renderer/components/ui/**"],
-      "linter": {
-        "enabled": false
-      }
-    },
-    {
       "includes": ["tests/e2e/fixtures.ts"],
       "linter": {
         "rules": {
@@ -63,7 +57,13 @@
       }
     },
     {
-      "includes": ["src/components/**", "src/pages/**", "src/layouts/**", "src/providers/**"],
+      "includes": [
+        "{src,src/renderer}/App.tsx",
+        "{src,src/renderer}/components/**",
+        "{src,src/renderer}/pages/**",
+        "{src,src/renderer}/layouts/**",
+        "{src,src/renderer}/providers/**"
+      ],
       "linter": {
         "rules": {
           "style": {
@@ -73,6 +73,12 @@
             }
           }
         }
+      }
+    },
+    {
+      "includes": ["src/renderer/components/ui/**"],
+      "linter": {
+        "enabled": false
       }
     },
     {

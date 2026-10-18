@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { MainView } from './MainView'
-import { SettingsView } from './SettingsView'
+import { MainView } from './pages/MainView'
+import { SettingsView } from './pages/SettingsView'
 
 type View = 'main' | 'settings'
 
