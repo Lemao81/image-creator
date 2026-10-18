@@ -1,4 +1,4 @@
-import type { DecryptedProviderSettings, ImageProvider } from '../types'
+import type { DecryptedProviderSettings, ImageProvider } from '#/types'
 
 type ImagesResponse = {
   data: { b64_json?: string; url?: string }[]

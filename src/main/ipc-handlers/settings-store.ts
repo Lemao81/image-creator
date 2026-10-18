@@ -1,8 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { app, safeStorage } from 'electron'
-import type { ProviderSettings, ProviderSettingsUpdate } from '../../shared/types'
-import type { DecryptedProviderSettings, StoredProviderSettings, StoredSettings } from '../types'
+import type { DecryptedProviderSettings, StoredProviderSettings, StoredSettings } from '#/types'
+import type { ProviderSettings, ProviderSettingsUpdate } from '~/types'
 
 function settingsFilePath(): string {
   return path.join(app.getPath('userData'), 'settings.json')

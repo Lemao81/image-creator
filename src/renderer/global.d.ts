@@ -1,4 +1,4 @@
-import type { Bridge } from '../shared/bridge'
+import type { Bridge } from '~/bridge'
 
 declare global {
   interface Window {

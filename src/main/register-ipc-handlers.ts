@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
-import { IpcChannel } from '../shared/constants'
-import type { ProviderSettingsUpdate } from '../shared/types'
+import { IpcChannel } from '~/constants'
+import type { ProviderSettingsUpdate } from '~/types'
 import { generate } from './ipc-handlers/generation'
 import { loadProviderSettings, saveProviderSettings } from './ipc-handlers/settings-store'
 

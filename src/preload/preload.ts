@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { Bridge } from '../shared/bridge'
-import { IpcChannel } from '../shared/constants'
+import type { Bridge } from '~/bridge'
+import { IpcChannel } from '~/constants'
 
 const bridge: Bridge = {
   loadProviderSettings: () => ipcRenderer.invoke(IpcChannel.loadProviderSettings),

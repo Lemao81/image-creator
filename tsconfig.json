@@ -7,7 +7,9 @@
     "moduleResolution": "bundler",
     "types": ["node", "vite/client"],
     "paths": {
-      "@/*": ["./src/renderer/*"]
+      "@/*": ["./src/renderer/*"],
+      "#/*": ["./src/main/*"],
+      "~/*": ["./src/shared/*"]
     },
     "strict": true,
     "noEmit": true,
