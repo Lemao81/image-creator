@@ -1,8 +1,8 @@
 import { ipcMain } from 'electron'
 import { IpcChannel } from '../shared/constants'
 import type { ProviderSettingsUpdate } from '../shared/types'
-import { generate } from './generation'
-import { loadProviderSettings, saveProviderSettings } from './settings-store'
+import { generate } from './ipc-handlers/generation'
+import { loadProviderSettings, saveProviderSettings } from './ipc-handlers/settings-store'
 
 export function registerIpcHandlers(): void {
   ipcMain.handle(IpcChannel.loadProviderSettings, () => loadProviderSettings())

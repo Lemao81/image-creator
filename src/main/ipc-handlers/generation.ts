@@ -1,5 +1,5 @@
-import type { Candidate } from '../shared/types'
-import { createOpenAiCompatibleProvider } from './providers/openai-compatible'
+import type { Candidate } from '../../shared/types'
+import { createOpenAiCompatibleProvider } from '../providers/openai-compatible'
 import { loadDecryptedProviderSettings } from './settings-store'
 
 export async function generate(prompt: string): Promise<Candidate> {

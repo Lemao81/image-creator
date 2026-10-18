@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { app, BrowserWindow } from 'electron'
 import started from 'electron-squirrel-startup'
-import { registerIpcHandlers } from './ipc-handlers'
+import { registerIpcHandlers } from './register-ipc-handlers'
 
 if (started) {
   app.quit()
