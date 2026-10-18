@@ -30,17 +30,20 @@ async function saveSettings(
   await expect(window.getByRole('status')).toHaveText('Saved')
 }
 
-test('settings navigation', async ({ window }) => {
-  await openSettings(window)
+test('first run opens settings', async ({ window }) => {
   await expect(window.getByRole('heading', { name: 'Settings' })).toBeVisible()
   await expect(window.getByText('No API key set')).toBeVisible()
+})
 
+test('settings navigation', async ({ window }) => {
   await window.getByRole('button', { name: 'Back' }).click()
   await expect(window.getByRole('button', { name: 'Settings' })).toBeVisible()
+
+  await openSettings(window)
+  await expect(window.getByRole('heading', { name: 'Settings' })).toBeVisible()
 })
 
 test('settings restored', async ({ window, relaunch }) => {
-  await openSettings(window)
   await saveSettings(window, settings)
 
   const relaunched = await relaunch()
@@ -52,7 +55,6 @@ test('settings restored', async ({ window, relaunch }) => {
 })
 
 test('encrypted api key', async ({ window, userDataDir }) => {
-  await openSettings(window)
   await saveSettings(window, settings)
 
   const file = await readFile(path.join(userDataDir, 'settings.json'), 'utf8')
@@ -61,7 +63,6 @@ test('encrypted api key', async ({ window, userDataDir }) => {
 })
 
 test('empty api key kept', async ({ window, relaunch }) => {
-  await openSettings(window)
   await saveSettings(window, settings)
   await saveSettings(window, { ...settings, apiKey: '', model: 'dall-e-3' })
 

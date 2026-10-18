@@ -4,7 +4,7 @@
 
 **Blocked by:** 01 Scaffold and end-to-end harness.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [ ] A settings icon button opens the settings view; a back arrow returns to the main view.
 - [ ] Base URL, API key and model are persisted by an explicit Save and restored after relaunch.
