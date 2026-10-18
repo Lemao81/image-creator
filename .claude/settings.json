@@ -1,6 +1,9 @@
 {
   "permissions": {
-    "allow": ["Bash(git add *)", "Bash(git commit *)"],
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ],
     "ask": [
       "Bash(git push *)",
       "Bash(git merge *)",
@@ -9,6 +12,7 @@
       "Bash(git tag *)"
     ]
   },
+  "awaySummaryEnabled": false,
   "env": {
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1"
   },
