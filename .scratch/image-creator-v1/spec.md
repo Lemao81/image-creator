@@ -124,7 +124,7 @@ A desktop app where the user describes an image in a Prompt, picks the Output si
 
 ## Further Notes
 
-- Terms follow `CONTEXT.md`. Decisions with lasting consequences are recorded in ADR 0001 (OpenAI-compatible Images protocol) and ADR 0002 (Output size applied locally).
+- Terms follow `GLOSSARY.md`. Decisions with lasting consequences are recorded in ADR 0001 (OpenAI-compatible Images protocol) and ADR 0002 (Output size applied locally).
 - Supported sizes differ per model and change over time (e.g. gpt-image-1 supports 1024×1024, 1536×1024 and 1024×1536; dall-e-3 supports 1024×1024, 1792×1024 and 1024×1792); the built-in table must be easy to extend.
 - `safeStorage` depends on an OS keyring; on Windows this is DPAPI and always available.
 - In this sandbox `node_modules` comes from Windows, so the end-to-end tests run on the host, not in the sandbox.
