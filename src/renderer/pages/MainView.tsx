@@ -47,7 +47,12 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
           </FieldGroup>
         </form>
         {candidate ? (
-          <CandidatePreview candidate={candidate} />
+          <div className="flex flex-col items-start gap-4">
+            <CandidatePreview candidate={candidate} />
+            <Button onClick={() => window.bridge.accept(candidate).catch(console.error)}>
+              Accept
+            </Button>
+          </div>
         ) : (
           <Empty className="border">
             <EmptyHeader>
