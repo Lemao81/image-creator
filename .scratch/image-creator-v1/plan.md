@@ -18,7 +18,7 @@
 
 - [x] 3.1 Add the provider interface and OpenAI-compatible Generation
 - [x] 3.2 Add the Prompt input, Generate button and preview
-- [ ] 3.3 Add Accept writing the Candidate through the Save dialog
+- [x] 3.3 Add Accept writing the Candidate through the Save dialog
 
 ## [04 Test connection](issues/04-test-connection.md)
 

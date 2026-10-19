@@ -1,6 +1,7 @@
-import { ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import { IpcChannel } from '~/constants'
-import type { ProviderSettingsUpdate } from '~/types'
+import type { Candidate, ProviderSettingsUpdate } from '~/types'
+import { accept } from './ipc-handlers/acceptance'
 import { generate } from './ipc-handlers/generation'
 import { loadProviderSettings, saveProviderSettings } from './ipc-handlers/settings-store'
 
@@ -11,4 +12,7 @@ export function registerIpcHandlers(): void {
   )
 
   ipcMain.handle(IpcChannel.generate, (_event, prompt: string) => generate(prompt))
+  ipcMain.handle(IpcChannel.accept, (event, candidate: Candidate) =>
+    accept(BrowserWindow.fromWebContents(event.sender), candidate),
+  )
 }

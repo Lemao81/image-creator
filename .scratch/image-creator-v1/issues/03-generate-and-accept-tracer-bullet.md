@@ -4,7 +4,7 @@
 
 **Blocked by:** 02 Provider settings.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [ ] Generation goes through a provider interface with one OpenAI-compatible implementation (ADR 0001), running in the main process with the stored Provider settings.
 - [ ] The request carries the Prompt and the configured model without `response_format`; the image is read from `b64_json`, or downloaded from `url` when the API returns one.
@@ -23,3 +23,4 @@
 
 - Step 1: the request omits `response_format`, because `gpt-image-1` rejects it as an unknown parameter while DALL·E models return a URL unless it is set. Reading `b64_json` and falling back to downloading `url` works for every model name, including Azure deployment names that hide the model.
 - Step 2: Generate is disabled for an empty or whitespace-only Prompt, so no request is sent that the API can only reject.
+- Step 3: the end-to-end tests stub the Save dialog by replacing `dialog.showSaveDialog` in the main process, since Playwright cannot drive native dialogs.
