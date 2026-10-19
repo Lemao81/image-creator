@@ -1,33 +1,12 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-
-type SettingsInput = {
-  baseUrl: string
-  apiKey: string
-  model: string
-}
+import { openSettings, type SettingsInput, saveSettings } from './settings-helpers'
 
 const settings: SettingsInput = {
   baseUrl: 'https://images.example.test/v1',
   apiKey: 'sk-test-secret',
   model: 'gpt-image-1',
-}
-
-async function openSettings(window: Page): Promise<void> {
-  await window.getByRole('button', { name: 'Settings' }).click()
-}
-
-async function saveSettings(
-  window: Page,
-  { baseUrl, apiKey, model }: SettingsInput,
-): Promise<void> {
-  await window.getByLabel('Base URL').fill(baseUrl)
-  await window.getByLabel('API key').fill(apiKey)
-  await window.getByLabel('Model').fill(model)
-  await window.getByRole('button', { name: 'Save' }).click()
-  await expect(window.getByRole('status')).toHaveText('Saved')
 }
 
 test('first run opens settings', async ({ window }) => {

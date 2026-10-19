@@ -11,6 +11,6 @@ export type ProviderSettingsUpdate = {
 }
 
 export type Candidate = {
-  image: Uint8Array
+  image: Uint8Array<ArrayBuffer>
   prompt: string
 }

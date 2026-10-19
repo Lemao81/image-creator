@@ -15,5 +15,5 @@ export type DecryptedProviderSettings = {
 }
 
 export type ImageProvider = {
-  generate: (prompt: string) => Promise<Uint8Array>
+  generate: (prompt: string) => Promise<Uint8Array<ArrayBuffer>>
 }

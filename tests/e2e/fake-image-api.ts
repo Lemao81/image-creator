@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import path from 'node:path'
+import { json } from 'node:stream/consumers'
 
 export type GenerationRequest = {
   authorization: string | undefined
@@ -18,15 +19,6 @@ export const fixtureImagePath = path.join(__dirname, 'fixture-images', 'candidat
 
 const fixtureImageUrlPath = '/files/candidate.png'
 
-async function readBody(request: IncomingMessage): Promise<string> {
-  const chunks: Buffer[] = []
-  for await (const chunk of request) {
-    chunks.push(chunk as Buffer)
-  }
-
-  return Buffer.concat(chunks).toString('utf8')
-}
-
 function sendJson(response: ServerResponse, body: unknown): void {
   response.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify(body))
 }
@@ -37,7 +29,7 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
 
   async function handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
     if (request.method === 'POST' && request.url === '/images/generations') {
-      const body = JSON.parse(await readBody(request)) as Record<string, unknown>
+      const body = (await json(request)) as Record<string, unknown>
       generationRequests.push({ authorization: request.headers.authorization, body })
       const image = String(body.model).startsWith('dall-e')
         ? { url: `${baseUrl}${fixtureImageUrlPath}` }

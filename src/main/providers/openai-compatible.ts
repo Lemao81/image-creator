@@ -4,7 +4,7 @@ type ImagesResponse = {
   data: { b64_json?: string; url?: string }[]
 }
 
-async function fetchImage(url: string): Promise<Uint8Array> {
+async function fetchImage(url: string): Promise<Uint8Array<ArrayBuffer>> {
   const response = await fetch(url)
   if (!response.ok) {
     throw new Error(`Image download failed with status ${response.status}`)
@@ -18,7 +18,7 @@ export function createOpenAiCompatibleProvider({
   model,
   apiKey,
 }: DecryptedProviderSettings): ImageProvider {
-  async function generate(prompt: string): Promise<Uint8Array> {
+  async function generate(prompt: string): Promise<Uint8Array<ArrayBuffer>> {
     const response = await fetch(`${baseUrl.replace(/\/+$/, '')}/images/generations`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
