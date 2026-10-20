@@ -1,9 +1,10 @@
-import { ArrowLeftIcon, CircleAlertIcon } from 'lucide-react'
+import { ArrowLeftIcon, CircleAlertIcon, CircleCheckIcon } from 'lucide-react'
 import { type JSX, type SubmitEvent, useEffect, useState } from 'react'
-import { Alert, AlertTitle } from '@/components/ui/alert'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import type { ConnectionTestResult } from '~/types'
 
 type SettingsViewProps = {
   onBack: () => void
@@ -21,6 +22,8 @@ export function SettingsView({ onBack }: SettingsViewProps): JSX.Element {
   const [hasApiKey, setHasApiKey] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [testing, setTesting] = useState(false)
+  const [connection, setConnection] = useState<ConnectionTestResult | null>(null)
 
   useEffect(() => {
     async function load(): Promise<void> {
@@ -44,6 +47,20 @@ export function SettingsView({ onBack }: SettingsViewProps): JSX.Element {
   function edit(setValue: (value: string) => void, value: string): void {
     setValue(value)
     setSaved(false)
+    setConnection(null)
+  }
+
+  async function handleTestConnection(): Promise<void> {
+    setError(null)
+    setConnection(null)
+    setTesting(true)
+    try {
+      setConnection(await window.bridge.testConnection({ baseUrl, apiKey, model }))
+    } catch (e) {
+      setError(errorMessage(e))
+    } finally {
+      setTesting(false)
+    }
   }
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
@@ -107,6 +124,14 @@ export function SettingsView({ onBack }: SettingsViewProps): JSX.Element {
               </Field>
               <Field orientation="horizontal">
                 <Button type="submit">Save</Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={testing}
+                  onClick={() => void handleTestConnection()}
+                >
+                  Test connection
+                </Button>
                 {saved && (
                   <span role="status" className="text-sm text-muted-foreground">
                     Saved
@@ -115,6 +140,19 @@ export function SettingsView({ onBack }: SettingsViewProps): JSX.Element {
               </Field>
             </FieldGroup>
           </form>
+        )}
+        {connection?.ok === true && (
+          <Alert>
+            <CircleCheckIcon />
+            <AlertTitle>Connection works</AlertTitle>
+          </Alert>
+        )}
+        {connection?.ok === false && (
+          <Alert variant="destructive">
+            <CircleAlertIcon />
+            <AlertTitle>Connection failed</AlertTitle>
+            <AlertDescription>{connection.message}</AlertDescription>
+          </Alert>
         )}
         {error && (
           <Alert variant="destructive">

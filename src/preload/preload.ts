@@ -5,6 +5,7 @@ import { IpcChannel } from '~/constants'
 const bridge: Bridge = {
   loadProviderSettings: () => ipcRenderer.invoke(IpcChannel.loadProviderSettings),
   saveProviderSettings: (u) => ipcRenderer.invoke(IpcChannel.saveProviderSettings, u),
+  testConnection: (u) => ipcRenderer.invoke(IpcChannel.testConnection, u),
   generate: (p) => ipcRenderer.invoke(IpcChannel.generate, p),
   accept: (c) => ipcRenderer.invoke(IpcChannel.accept, c),
 }

@@ -4,7 +4,7 @@
 
 **Blocked by:** 02 Provider settings.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [ ] Test connection calls the models endpoint under the entered base URL with the entered (or stored) API key, without requiring Save first.
 - [ ] Success and failure are shown in the settings view; failures include the API's message or the network error.
@@ -13,3 +13,7 @@
 ## Steps
 
 1. Add Test connection with the models endpoint in the fake server and end-to-end tests.
+
+## Comments
+
+- Step 1: Test connection returns its outcome instead of throwing, because Electron prefixes errors thrown across IPC with "Error invoking remote method", which would bury the API's message. Network failures add the underlying cause (such as `ECONNREFUSED`) to fetch's generic "fetch failed".
