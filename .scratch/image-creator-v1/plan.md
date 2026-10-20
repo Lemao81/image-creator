@@ -22,7 +22,7 @@
 
 ## [04 Test connection](issues/04-test-connection.md)
 
-- [ ] 4.1 Add Test connection
+- [x] 4.1 Add Test connection
 
 ## [05 Generation progress and errors](issues/05-generation-progress-and-errors.md)
 

@@ -17,10 +17,12 @@ export type FakeImageApi = {
 
 export const fixtureImagePath = path.join(__dirname, 'fixture-images', 'candidate.png')
 
+export const fakeApiKey = 'sk-test'
+
 const fixtureImageUrlPath = '/files/candidate.png'
 
-function sendJson(response: ServerResponse, body: unknown): void {
-  response.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify(body))
+function sendJson(response: ServerResponse, body: unknown, status = 200): void {
+  response.writeHead(status, { 'Content-Type': 'application/json' }).end(JSON.stringify(body))
 }
 
 export async function startFakeImageApi(): Promise<FakeImageApi> {
@@ -36,6 +38,18 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
         : { b64_json: fixtureImage.toString('base64') }
 
       sendJson(response, { created: Math.floor(Date.now() / 1000), data: [image] })
+
+      return
+    }
+
+    if (request.method === 'GET' && request.url === '/models') {
+      if (request.headers.authorization !== `Bearer ${fakeApiKey}`) {
+        sendJson(response, { error: { message: 'Incorrect API key provided' } }, 401)
+
+        return
+      }
+
+      sendJson(response, { object: 'list', data: [{ id: 'gpt-image-1', object: 'model' }] })
 
       return
     }

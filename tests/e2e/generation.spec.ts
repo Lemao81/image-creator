@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import type { Page } from '@playwright/test'
-import { type FakeImageApi, fixtureImagePath } from './fake-image-api'
+import { type FakeImageApi, fakeApiKey, fixtureImagePath } from './fake-image-api'
 import { expect, test } from './fixtures'
 import { saveDialogShown, stubSaveDialog } from './save-dialog-helpers'
 import { saveSettings } from './settings-helpers'
@@ -13,7 +13,7 @@ async function generateCandidate(
   fakeImageApi: FakeImageApi,
   model: string,
 ): Promise<void> {
-  await saveSettings(window, { baseUrl: fakeImageApi.baseUrl, apiKey: 'sk-test', model })
+  await saveSettings(window, { baseUrl: fakeImageApi.baseUrl, apiKey: fakeApiKey, model })
   await window.getByRole('button', { name: 'Back' }).click()
   await expect(window.getByText('No Candidate yet')).toBeVisible()
 
@@ -30,7 +30,7 @@ for (const model of ['gpt-image-1', 'dall-e-3']) {
     await expect(preview).toHaveJSProperty('naturalWidth', 1024)
     await expect(preview).toHaveJSProperty('naturalHeight', 1024)
     expect(fakeImageApi.generationRequests).toMatchObject([
-      { authorization: 'Bearer sk-test', body: { model, prompt } },
+      { authorization: `Bearer ${fakeApiKey}`, body: { model, prompt } },
     ])
   })
 }

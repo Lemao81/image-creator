@@ -59,6 +59,12 @@ export async function loadDecryptedProviderSettings(): Promise<DecryptedProvider
   }
 }
 
+export async function loadStoredApiKey(): Promise<string> {
+  const { provider } = await readSettings()
+
+  return provider?.encryptedApiKey ? decryptApiKey(provider.encryptedApiKey) : ''
+}
+
 export async function saveProviderSettings(
   update: ProviderSettingsUpdate,
 ): Promise<ProviderSettings> {

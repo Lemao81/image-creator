@@ -10,6 +10,8 @@ export type ProviderSettingsUpdate = {
   apiKey: string
 }
 
+export type ConnectionTestResult = { ok: true } | { ok: false; message: string }
+
 export type Candidate = {
   image: Uint8Array<ArrayBuffer>
   prompt: string
