@@ -68,4 +68,6 @@ The tool versions come from `devEngines` in `package.json`: `runtime.version` fo
 
 ## Keeping it current
 
+Run pnpm only while `node_modules` is mounted; on the unmounted folder it would rewrite the host's Windows install.
+
 The host install owns `package.json` and `pnpm-lock.yaml`; the sandbox only follows them with `pnpm install --frozen-lockfile`, when CLAUDE.md says so. `sudo umount node_modules` reveals the host's `node_modules` again.
