@@ -1,6 +1,7 @@
 import { ImageIcon, SettingsIcon } from 'lucide-react'
-import { type JSX, type SubmitEvent, useState } from 'react'
+import { type JSX, type SubmitEvent, useRef, useState } from 'react'
 import { CandidatePreview } from '@/components/CandidatePreview'
+import { GenerationProgress } from '@/components/GenerationProgress'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -14,10 +15,36 @@ type MainViewProps = {
 export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   const [prompt, setPrompt] = useState('')
   const [candidate, setCandidate] = useState<Candidate | null>(null)
+  const [startedAt, setStartedAt] = useState<number | null>(null)
+  const runningGeneration = useRef<number | null>(null)
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
-    setCandidate(await window.bridge.generate(prompt))
+    const generation = Date.now()
+    runningGeneration.current = generation
+    setStartedAt(generation)
+
+    try {
+      const result = await window.bridge.generate(prompt)
+      if (runningGeneration.current === generation) {
+        setCandidate(result)
+      }
+    } catch (error) {
+      if (runningGeneration.current === generation) {
+        throw error
+      }
+    } finally {
+      if (runningGeneration.current === generation) {
+        runningGeneration.current = null
+        setStartedAt(null)
+      }
+    }
+  }
+
+  async function handleCancel(): Promise<void> {
+    runningGeneration.current = null
+    setStartedAt(null)
+    await window.bridge.cancelGeneration()
   }
 
   return (
@@ -40,9 +67,21 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
               />
             </Field>
             <Field orientation="horizontal">
-              <Button type="submit" disabled={!prompt.trim()}>
+              <Button type="submit" disabled={!prompt.trim() || startedAt !== null}>
                 Generate
               </Button>
+              {startedAt !== null && (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleCancel().catch(console.error)}
+                  >
+                    Cancel
+                  </Button>
+                  <GenerationProgress startedAt={startedAt} />
+                </>
+              )}
             </Field>
           </FieldGroup>
         </form>

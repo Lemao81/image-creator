@@ -21,4 +21,4 @@
 
 ## Open decisions (ask the user before starting)
 
-- Request timeout: none (rely on Cancel), or a fixed limit such as 120 s?
+- Request timeout: none (rely on Cancel), or a fixed limit such as 120 s? **Answer:** None; rely on Cancel.
