@@ -4,13 +4,12 @@ A cloud session (`CLAUDE_CODE_REMOTE=true`) runs in a fresh Linux container clon
 
 ## Setup
 
-Every cloud session starts by installing its tooling into the container. The installs land in the home directory and the git-ignored `node_modules`, so the working tree stays clean. Run, with the versions pinned in `devEngines` of `package.json`:
+The cloud environment's setup script installs the Node and pnpm versions pinned in `devEngines` of `package.json`, outside the repository.
 
-1. **Node.** Use the container's nvm (`$NVM_DIR`), or clone `https://github.com/nvm-sh/nvm.git` into `~/.nvm` when there is none; `nvm install` the pinned Node, then append `export PATH="<that Node's bin directory>:$PATH"` to `~/.bashrc` so every later command runs on it.
-2. **pnpm.** `npm install --global pnpm@<pinned version>`.
-3. **Dependencies.** `pnpm install --frozen-lockfile`, prefixed with `ELECTRON_SKIP_BINARY_DOWNLOAD=1` when the project depends on `electron`.
+1. **Check** in a fresh shell that `node --version` and `pnpm --version` print the pinned versions. When they differ, install the pinned versions for this session with nvm and npm, and tell the user the setup script needs updating.
+2. **Install** with `pnpm install --frozen-lockfile`, prefixed with `ELECTRON_SKIP_BINARY_DOWNLOAD=1` when the project depends on `electron`.
 
-Done when, in a fresh shell, `node --version` and `pnpm --version` print the pinned versions, `node_modules/.modules.yaml` exists, and `git status` shows nothing from the setup.
+Done when the pinned versions print, `node_modules/.modules.yaml` exists, and `git status` shows nothing from the setup.
 
 ## Branch and pull request
 
