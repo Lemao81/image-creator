@@ -7,6 +7,7 @@ const bridge: Bridge = {
   saveProviderSettings: (u) => ipcRenderer.invoke(IpcChannel.saveProviderSettings, u),
   testConnection: (u) => ipcRenderer.invoke(IpcChannel.testConnection, u),
   generate: (p) => ipcRenderer.invoke(IpcChannel.generate, p),
+  cancelGeneration: () => ipcRenderer.invoke(IpcChannel.cancelGeneration),
   accept: (c) => ipcRenderer.invoke(IpcChannel.accept, c),
 }
 

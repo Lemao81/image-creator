@@ -15,6 +15,6 @@ export type DecryptedProviderSettings = {
 }
 
 export type ImageProvider = {
-  generate: (prompt: string) => Promise<Uint8Array<ArrayBuffer>>
+  generate: (prompt: string, signal: AbortSignal) => Promise<Uint8Array<ArrayBuffer>>
   testConnection: () => Promise<void>
 }

@@ -10,5 +10,6 @@ export type Bridge = {
   saveProviderSettings: (update: ProviderSettingsUpdate) => Promise<ProviderSettings>
   testConnection: (update: ProviderSettingsUpdate) => Promise<ConnectionTestResult>
   generate: (prompt: string) => Promise<Candidate>
+  cancelGeneration: () => Promise<void>
   accept: (candidate: Candidate) => Promise<void>
 }

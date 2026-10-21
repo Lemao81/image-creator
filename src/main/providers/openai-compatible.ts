@@ -17,8 +17,8 @@ async function apiError(response: Response): Promise<Error> {
   return new Error(message ? `${status}: ${message}` : status)
 }
 
-async function fetchImage(url: string): Promise<Uint8Array<ArrayBuffer>> {
-  const response = await fetch(url)
+async function fetchImage(url: string, signal: AbortSignal): Promise<Uint8Array<ArrayBuffer>> {
+  const response = await fetch(url, { signal })
   if (!response.ok) {
     throw new Error(`Image download failed with status ${response.status}`)
   }
@@ -31,11 +31,12 @@ export function createOpenAiCompatibleProvider({
   model,
   apiKey,
 }: DecryptedProviderSettings): ImageProvider {
-  async function generate(prompt: string): Promise<Uint8Array<ArrayBuffer>> {
+  async function generate(prompt: string, signal: AbortSignal): Promise<Uint8Array<ArrayBuffer>> {
     const response = await fetch(endpoint(baseUrl, '/images/generations'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({ model, prompt, n: 1 }),
+      signal,
     })
 
     if (!response.ok) {
@@ -48,7 +49,7 @@ export function createOpenAiCompatibleProvider({
     }
 
     if (image?.url) {
-      return fetchImage(image.url)
+      return fetchImage(image.url, signal)
     }
 
     throw new Error('Image API returned no image')

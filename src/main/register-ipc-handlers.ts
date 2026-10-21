@@ -3,7 +3,7 @@ import { IpcChannel } from '~/constants'
 import type { Candidate, ProviderSettingsUpdate } from '~/types'
 import { accept } from './ipc-handlers/acceptance'
 import { testConnection } from './ipc-handlers/connection-test'
-import { generate } from './ipc-handlers/generation'
+import { cancelGeneration, generate } from './ipc-handlers/generation'
 import { loadProviderSettings, saveProviderSettings } from './ipc-handlers/settings-store'
 
 export function registerIpcHandlers(): void {
@@ -17,6 +17,7 @@ export function registerIpcHandlers(): void {
   )
 
   ipcMain.handle(IpcChannel.generate, (_event, prompt: string) => generate(prompt))
+  ipcMain.handle(IpcChannel.cancelGeneration, () => cancelGeneration())
   ipcMain.handle(IpcChannel.accept, (event, candidate: Candidate) =>
     accept(BrowserWindow.fromWebContents(event.sender), candidate),
   )

@@ -12,6 +12,8 @@ export type GenerationRequest = {
 export type FakeImageApi = {
   baseUrl: string
   generationRequests: GenerationRequest[]
+  abortedGenerationRequests: GenerationRequest[]
+  holdGenerations: () => () => void
   stop: () => Promise<void>
 }
 
@@ -28,11 +30,25 @@ function sendJson(response: ServerResponse, body: unknown, status = 200): void {
 export async function startFakeImageApi(): Promise<FakeImageApi> {
   const fixtureImage = await readFile(fixtureImagePath)
   const generationRequests: GenerationRequest[] = []
+  const abortedGenerationRequests: GenerationRequest[] = []
+  let heldGenerations: Promise<void> | null = null
 
   async function handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
     if (request.method === 'POST' && request.url === '/images/generations') {
       const body = (await json(request)) as Record<string, unknown>
-      generationRequests.push({ authorization: request.headers.authorization, body })
+      const generationRequest = { authorization: request.headers.authorization, body }
+      generationRequests.push(generationRequest)
+      response.on('close', () => {
+        if (!response.writableFinished) {
+          abortedGenerationRequests.push(generationRequest)
+        }
+      })
+
+      await heldGenerations
+      if (response.destroyed) {
+        return
+      }
+
       const image = String(body.model).startsWith('dall-e')
         ? { url: `${baseUrl}${fixtureImageUrlPath}` }
         : { b64_json: fixtureImage.toString('base64') }
@@ -78,6 +94,18 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
   return {
     baseUrl,
     generationRequests,
+    abortedGenerationRequests,
+    holdGenerations: () => {
+      let release: (() => void) | undefined
+      heldGenerations = new Promise((resolve) => {
+        release = resolve
+      })
+
+      return () => {
+        heldGenerations = null
+        release?.()
+      }
+    },
     stop: () =>
       new Promise((resolve, reject) => {
         server.closeAllConnections()

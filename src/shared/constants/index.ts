@@ -3,5 +3,6 @@ export const IpcChannel = {
   saveProviderSettings: 'provider-settings:save',
   testConnection: 'provider-settings:test-connection',
   generate: 'generation:start',
+  cancelGeneration: 'generation:cancel',
   accept: 'candidate:accept',
 } as const
