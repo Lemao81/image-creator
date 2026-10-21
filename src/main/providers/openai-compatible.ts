@@ -1,4 +1,5 @@
 import type { DecryptedProviderSettings, ImageProvider } from '#/types'
+import { endpoint } from '#/utils/helpers'
 
 type ImagesResponse = {
   data: { b64_json?: string; url?: string }[]
@@ -30,12 +31,8 @@ export function createOpenAiCompatibleProvider({
   model,
   apiKey,
 }: DecryptedProviderSettings): ImageProvider {
-  function endpoint(path: string): string {
-    return `${baseUrl.replace(/\/+$/, '')}${path}`
-  }
-
   async function generate(prompt: string): Promise<Uint8Array<ArrayBuffer>> {
-    const response = await fetch(endpoint('/images/generations'), {
+    const response = await fetch(endpoint(baseUrl, '/images/generations'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({ model, prompt, n: 1 }),
@@ -58,7 +55,7 @@ export function createOpenAiCompatibleProvider({
   }
 
   async function testConnection(): Promise<void> {
-    const response = await fetch(endpoint('/models'), {
+    const response = await fetch(endpoint(baseUrl, '/models'), {
       headers: { Authorization: `Bearer ${apiKey}` },
     })
 
