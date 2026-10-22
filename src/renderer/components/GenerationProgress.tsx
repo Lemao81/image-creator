@@ -1,5 +1,5 @@
-import { LoaderCircleIcon } from 'lucide-react'
 import { type JSX, useEffect, useState } from 'react'
+import { Spinner } from '@/components/ui/spinner'
 
 type GenerationProgressProps = {
   startedAt: number
@@ -20,7 +20,7 @@ export function GenerationProgress({ startedAt }: GenerationProgressProps): JSX.
 
   return (
     <div role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
-      <LoaderCircleIcon className="size-4 animate-spin" />
+      <Spinner aria-hidden />
       Generating… {seconds} s
     </div>
   )
