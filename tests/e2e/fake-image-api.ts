@@ -18,11 +18,13 @@ export type FakeImageApi = {
   stop: () => Promise<void>
 }
 
-export const fixtureImagePath = path.join(__dirname, 'fixture-images', 'candidate.png')
+const fixtureImageNames = ['candidate.png', 'other-candidate.png']
+
+export const fixtureImagePaths = fixtureImageNames.map((n) =>
+  path.join(__dirname, 'fixture-images', n),
+)
 
 export const fakeApiKey = 'sk-test'
-
-const fixtureImageUrlPath = '/files/candidate.png'
 
 export async function unreachableBaseUrl(): Promise<string> {
   const server = createNetServer()
@@ -38,7 +40,7 @@ function sendJson(response: ServerResponse, body: unknown, status = 200): void {
 }
 
 export async function startFakeImageApi(): Promise<FakeImageApi> {
-  const fixtureImage = await readFile(fixtureImagePath)
+  const fixtureImages = await Promise.all(fixtureImagePaths.map((p) => readFile(p)))
   const generationRequests: GenerationRequest[] = []
   const abortedGenerationRequests: GenerationRequest[] = []
   let heldGenerations: Promise<void> | null = null
@@ -48,6 +50,7 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
     if (request.method === 'POST' && request.url === '/images/generations') {
       const body = (await json(request)) as Record<string, unknown>
       const generationRequest = { authorization: request.headers.authorization, body }
+      const fixtureIndex = generationRequests.length % fixtureImages.length
       generationRequests.push(generationRequest)
       response.on('close', () => {
         if (!response.writableFinished) {
@@ -69,8 +72,8 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
       }
 
       const image = String(body.model).startsWith('dall-e')
-        ? { url: `${baseUrl}${fixtureImageUrlPath}` }
-        : { b64_json: fixtureImage.toString('base64') }
+        ? { url: `${baseUrl}/files/${fixtureImageNames[fixtureIndex]}` }
+        : { b64_json: fixtureImages[fixtureIndex].toString('base64') }
 
       sendJson(response, { created: Math.floor(Date.now() / 1000), data: [image] })
 
@@ -89,8 +92,9 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
       return
     }
 
-    if (request.method === 'GET' && request.url === fixtureImageUrlPath) {
-      response.writeHead(200, { 'Content-Type': 'image/png' }).end(fixtureImage)
+    const fixtureImageIndex = fixtureImageNames.findIndex((n) => request.url === `/files/${n}`)
+    if (request.method === 'GET' && fixtureImageIndex !== -1) {
+      response.writeHead(200, { 'Content-Type': 'image/png' }).end(fixtureImages[fixtureImageIndex])
 
       return
     }

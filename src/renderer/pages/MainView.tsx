@@ -1,5 +1,6 @@
 import { CircleAlertIcon, ImageIcon, SettingsIcon } from 'lucide-react'
-import { type JSX, type KeyboardEvent, type SubmitEvent, useRef, useState } from 'react'
+import { type JSX, type KeyboardEvent, type SubmitEvent, useEffect, useRef, useState } from 'react'
+import { CandidateNavigation } from '@/components/CandidateNavigation'
 import { CandidatePreview } from '@/components/CandidatePreview'
 import { GenerationProgress } from '@/components/GenerationProgress'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -13,13 +14,50 @@ type MainViewProps = {
   onOpenSettings: () => void
 }
 
+type CandidateHistory = {
+  candidates: Candidate[]
+  shown: number
+}
+
+function showOffset(history: CandidateHistory, offset: number): CandidateHistory {
+  const shown = Math.max(Math.min(history.shown + offset, history.candidates.length - 1), 0)
+
+  return { ...history, shown }
+}
+
+function isTextField(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || target.matches('input, textarea, select'))
+  )
+}
+
 export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   const [prompt, setPrompt] = useState('')
-  const [candidate, setCandidate] = useState<Candidate | null>(null)
+  const [history, setHistory] = useState<CandidateHistory>({ candidates: [], shown: 0 })
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
   const runningGeneration = useRef<number | null>(null)
+  const candidate = history.candidates.at(history.shown)
   const canGenerate = prompt.trim() !== '' && startedAt === null
+
+  useEffect(() => {
+    function handleKeyDown(event: globalThis.KeyboardEvent): void {
+      if (isTextField(event.target)) {
+        return
+      }
+
+      if (event.key === 'ArrowLeft') {
+        setHistory((h) => showOffset(h, -1))
+      } else if (event.key === 'ArrowRight') {
+        setHistory((h) => showOffset(h, 1))
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
@@ -35,7 +73,11 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
       }
 
       if (result.ok) {
-        setCandidate(result.candidate)
+        const { candidate: generated } = result
+        setHistory((h) => ({
+          candidates: [...h.candidates, generated],
+          shown: h.candidates.length,
+        }))
       } else {
         setError(result.message)
       }
@@ -113,6 +155,11 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
         {candidate ? (
           <div className="flex flex-col items-start gap-4">
             <CandidatePreview candidate={candidate} />
+            <CandidateNavigation
+              shown={history.shown}
+              count={history.candidates.length}
+              onShow={(o) => setHistory((h) => showOffset(h, o))}
+            />
             <Button onClick={() => window.bridge.accept(candidate).catch(console.error)}>
               Accept
             </Button>

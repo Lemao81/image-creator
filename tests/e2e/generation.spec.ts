@@ -4,25 +4,16 @@ import type { Page } from '@playwright/test'
 import {
   type FakeImageApi,
   fakeApiKey,
-  fixtureImagePath,
+  fixtureImagePaths,
   unreachableBaseUrl,
 } from './fake-image-api'
 import { expect, test } from './fixtures'
+import { generate, openMainView } from './generation-helpers'
 import { saveDialogShown, stubSaveDialog } from './save-dialog-helpers'
 import { saveSettings } from './settings-helpers'
 
 const prompt = 'A watercolour fox in a snowy forest'
 const otherPrompt = 'A pencil sketch of a lighthouse at dusk'
-
-async function openMainView(
-  window: Page,
-  fakeImageApi: FakeImageApi,
-  model: string,
-): Promise<void> {
-  await saveSettings(window, { baseUrl: fakeImageApi.baseUrl, apiKey: fakeApiKey, model })
-  await window.getByRole('button', { name: 'Back' }).click()
-  await expect(window.getByText('No Candidate yet')).toBeVisible()
-}
 
 async function generateCandidate(
   window: Page,
@@ -30,9 +21,7 @@ async function generateCandidate(
   model: string,
 ): Promise<void> {
   await openMainView(window, fakeImageApi, model)
-  await window.getByLabel('Prompt').fill(prompt)
-  await window.getByRole('button', { name: 'Generate' }).click()
-  await expect(window.getByRole('img', { name: prompt })).toBeVisible()
+  await generate(window, prompt)
 }
 
 for (const model of ['gpt-image-1', 'dall-e-3']) {
@@ -67,7 +56,7 @@ test('accept writes the candidate', async ({ app, window, fakeImageApi, userData
 
   await window.getByRole('button', { name: 'Accept' }).click()
 
-  const fixtureImage = await readFile(fixtureImagePath)
+  const fixtureImage = await readFile(fixtureImagePaths[0])
   await expect.poll(() => readFile(filePath).catch(() => null)).toEqual(fixtureImage)
 })
 

@@ -20,5 +20,5 @@
 
 ## Open decisions (ask the user before starting)
 
-- Should the slider also show a strip of thumbnails, or only previous and next?
-- Keyboard navigation with the arrow keys: yes or no?
+- Should the slider also show a strip of thumbnails, or only previous and next? **Answer:** Only previous and next.
+- Keyboard navigation with the arrow keys: yes or no? **Answer:** Yes; Left and Right navigate, except while focus is in a text field.
