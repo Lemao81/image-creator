@@ -1,5 +1,5 @@
 import { CircleAlertIcon, ImageIcon, SettingsIcon } from 'lucide-react'
-import { type JSX, type SubmitEvent, useRef, useState } from 'react'
+import { type JSX, type KeyboardEvent, type SubmitEvent, useRef, useState } from 'react'
 import { CandidatePreview } from '@/components/CandidatePreview'
 import { GenerationProgress } from '@/components/GenerationProgress'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -19,6 +19,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
   const runningGeneration = useRef<number | null>(null)
+  const canGenerate = prompt.trim() !== '' && startedAt === null
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
@@ -46,6 +47,17 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     }
   }
 
+  function handlePromptKeyDown(event: KeyboardEvent<HTMLTextAreaElement>): void {
+    if (!event.ctrlKey || event.key !== 'Enter') {
+      return
+    }
+
+    event.preventDefault()
+    if (canGenerate) {
+      event.currentTarget.form?.requestSubmit()
+    }
+  }
+
   async function handleCancel(): Promise<void> {
     runningGeneration.current = null
     setStartedAt(null)
@@ -69,10 +81,11 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
                 value={prompt}
                 placeholder="A watercolour fox in a snowy forest"
                 onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={handlePromptKeyDown}
               />
             </Field>
             <Field orientation="horizontal">
-              <Button type="submit" disabled={!prompt.trim() || startedAt !== null}>
+              <Button type="submit" disabled={!canGenerate}>
                 Generate
               </Button>
               {startedAt !== null && (
