@@ -4,7 +4,7 @@
 
 **Blocked by:** 03 Generate and Accept tracer bullet.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [ ] A running Generation shows a spinner and the elapsed time.
 - [ ] Cancel aborts the request; no Candidate is added and the preview is unchanged.

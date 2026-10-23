@@ -28,7 +28,7 @@
 
 - [x] 5.1 Add the running state with spinner, elapsed time and Cancel
 - [x] 5.2 Add the error banner
-- [ ] 5.3 Add Ctrl+Enter to start a Generation
+- [x] 5.3 Add Ctrl+Enter to start a Generation
 
 ## [06 Candidate history](issues/06-candidate-history.md)
 

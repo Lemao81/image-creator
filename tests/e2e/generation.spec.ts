@@ -104,6 +104,27 @@ test('running generation shows progress', async ({ window, fakeImageApi }) => {
   await expect(window.getByRole('button', { name: 'Generate' })).toBeEnabled()
 })
 
+test('ctrl+enter starts a generation', async ({ window, fakeImageApi }) => {
+  await openMainView(window, fakeImageApi, 'gpt-image-1')
+  const promptInput = window.getByLabel('Prompt')
+
+  await promptInput.press('Control+Enter')
+  await expect(window.getByRole('status')).toBeHidden()
+
+  const release = fakeImageApi.holdGenerations()
+  await promptInput.fill(prompt)
+  await promptInput.press('Control+Enter')
+
+  await expect(window.getByRole('status')).toBeVisible()
+  await expect(promptInput).toHaveValue(prompt)
+  await promptInput.press('Control+Enter')
+
+  release()
+
+  await expect(window.getByRole('img', { name: prompt })).toBeVisible()
+  expect(fakeImageApi.generationRequests).toMatchObject([{ body: { prompt } }])
+})
+
 test('cancel keeps the preview', async ({ window, fakeImageApi }) => {
   await generateCandidate(window, fakeImageApi, 'gpt-image-1')
   const release = fakeImageApi.holdGenerations()
