@@ -40,7 +40,7 @@ export function createOpenAiCompatibleProvider({
     })
 
     if (!response.ok) {
-      throw new Error(`Image API responded with status ${response.status}`)
+      throw await apiError(response)
     }
 
     const [image] = ((await response.json()) as ImagesResponse).data

@@ -1,14 +1,7 @@
 import { createOpenAiCompatibleProvider } from '#/providers/openai-compatible'
+import { errorMessage } from '#/utils/helpers'
 import type { ConnectionTestResult, ProviderSettingsUpdate } from '~/types'
 import { loadStoredApiKey } from './settings-store'
-
-function errorMessage(error: unknown): string {
-  if (!(error instanceof Error)) {
-    return String(error)
-  }
-
-  return error.cause instanceof Error ? `${error.message}: ${error.cause.message}` : error.message
-}
 
 export async function testConnection(
   update: ProviderSettingsUpdate,

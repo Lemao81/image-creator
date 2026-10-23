@@ -1,7 +1,8 @@
-import { ImageIcon, SettingsIcon } from 'lucide-react'
+import { CircleAlertIcon, ImageIcon, SettingsIcon } from 'lucide-react'
 import { type JSX, type SubmitEvent, useRef, useState } from 'react'
 import { CandidatePreview } from '@/components/CandidatePreview'
 import { GenerationProgress } from '@/components/GenerationProgress'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -16,6 +17,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   const [prompt, setPrompt] = useState('')
   const [candidate, setCandidate] = useState<Candidate | null>(null)
   const [startedAt, setStartedAt] = useState<number | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const runningGeneration = useRef<number | null>(null)
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
@@ -23,15 +25,18 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     const generation = Date.now()
     runningGeneration.current = generation
     setStartedAt(generation)
+    setError(null)
 
     try {
       const result = await window.bridge.generate(prompt)
-      if (runningGeneration.current === generation) {
-        setCandidate(result)
+      if (runningGeneration.current !== generation) {
+        return
       }
-    } catch (error) {
-      if (runningGeneration.current === generation) {
-        throw error
+
+      if (result.ok) {
+        setCandidate(result.candidate)
+      } else {
+        setError(result.message)
       }
     } finally {
       if (runningGeneration.current === generation) {
@@ -85,6 +90,13 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
             </Field>
           </FieldGroup>
         </form>
+        {error && (
+          <Alert variant="destructive">
+            <CircleAlertIcon />
+            <AlertTitle>Generation failed</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         {candidate ? (
           <div className="flex flex-col items-start gap-4">
             <CandidatePreview candidate={candidate} />

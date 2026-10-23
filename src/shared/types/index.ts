@@ -16,3 +16,5 @@ export type Candidate = {
   image: Uint8Array<ArrayBuffer>
   prompt: string
 }
+
+export type GenerationResult = { ok: true; candidate: Candidate } | { ok: false; message: string }

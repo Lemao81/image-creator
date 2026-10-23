@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
-import type { AddressInfo } from 'node:net'
+import { type AddressInfo, createServer as createNetServer } from 'node:net'
 import path from 'node:path'
 import { json } from 'node:stream/consumers'
 
@@ -14,6 +14,7 @@ export type FakeImageApi = {
   generationRequests: GenerationRequest[]
   abortedGenerationRequests: GenerationRequest[]
   holdGenerations: () => () => void
+  failNextGeneration: (status: number, message: string) => void
   stop: () => Promise<void>
 }
 
@@ -22,6 +23,15 @@ export const fixtureImagePath = path.join(__dirname, 'fixture-images', 'candidat
 export const fakeApiKey = 'sk-test'
 
 const fixtureImageUrlPath = '/files/candidate.png'
+
+export async function unreachableBaseUrl(): Promise<string> {
+  const server = createNetServer()
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+  const { port } = server.address() as AddressInfo
+  await new Promise<void>((resolve) => server.close(() => resolve()))
+
+  return `http://127.0.0.1:${port}`
+}
 
 function sendJson(response: ServerResponse, body: unknown, status = 200): void {
   response.writeHead(status, { 'Content-Type': 'application/json' }).end(JSON.stringify(body))
@@ -32,6 +42,7 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
   const generationRequests: GenerationRequest[] = []
   const abortedGenerationRequests: GenerationRequest[] = []
   let heldGenerations: Promise<void> | null = null
+  let nextGenerationFailure: { status: number; message: string } | null = null
 
   async function handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
     if (request.method === 'POST' && request.url === '/images/generations') {
@@ -46,6 +57,14 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
 
       await heldGenerations
       if (response.destroyed) {
+        return
+      }
+
+      if (nextGenerationFailure) {
+        const { status, message } = nextGenerationFailure
+        nextGenerationFailure = null
+        sendJson(response, { error: { message } }, status)
+
         return
       }
 
@@ -105,6 +124,9 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
         heldGenerations = null
         release?.()
       }
+    },
+    failNextGeneration: (status, message) => {
+      nextGenerationFailure = { status, message }
     },
     stop: () =>
       new Promise((resolve, reject) => {
