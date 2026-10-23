@@ -1,7 +1,12 @@
 import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import type { Page } from '@playwright/test'
-import { type FakeImageApi, fakeApiKey, fixtureImagePath } from './fake-image-api'
+import {
+  type FakeImageApi,
+  fakeApiKey,
+  fixtureImagePath,
+  unreachableBaseUrl,
+} from './fake-image-api'
 import { expect, test } from './fixtures'
 import { saveDialogShown, stubSaveDialog } from './save-dialog-helpers'
 import { saveSettings } from './settings-helpers'
@@ -118,4 +123,48 @@ test('cancel keeps the preview', async ({ window, fakeImageApi }) => {
 
   await expect(window.getByRole('img', { name: prompt })).toBeVisible()
   await expect(window.getByRole('img', { name: otherPrompt })).toBeHidden()
+})
+
+test('api error shows the banner until the next generation', async ({ window, fakeImageApi }) => {
+  await generateCandidate(window, fakeImageApi, 'gpt-image-1')
+  fakeImageApi.failNextGeneration(400, 'Your request was rejected by the safety system')
+
+  await window.getByLabel('Prompt').fill(otherPrompt)
+  await window.getByRole('button', { name: 'Generate' }).click()
+
+  const banner = window.getByRole('alert')
+  await expect(banner).toContainText('Generation failed')
+  await expect(banner).toContainText('400')
+  await expect(banner).toContainText('Your request was rejected by the safety system')
+  await expect(window.getByRole('img', { name: prompt })).toBeVisible()
+  await expect(window.getByRole('button', { name: 'Generate' })).toBeEnabled()
+
+  const release = fakeImageApi.holdGenerations()
+  await window.getByRole('button', { name: 'Generate' }).click()
+
+  await expect(window.getByRole('status')).toBeVisible()
+  await expect(banner).toBeHidden()
+
+  release()
+
+  await expect(window.getByRole('img', { name: otherPrompt })).toBeVisible()
+  await expect(banner).toBeHidden()
+})
+
+test('network error shows the banner', async ({ window }) => {
+  await saveSettings(window, {
+    baseUrl: await unreachableBaseUrl(),
+    apiKey: fakeApiKey,
+    model: 'gpt-image-1',
+  })
+
+  await window.getByRole('button', { name: 'Back' }).click()
+
+  await window.getByLabel('Prompt').fill(prompt)
+  await window.getByRole('button', { name: 'Generate' }).click()
+
+  const banner = window.getByRole('alert')
+  await expect(banner).toContainText('Generation failed')
+  await expect(banner).toContainText('ECONNREFUSED')
+  await expect(window.getByText('No Candidate yet')).toBeVisible()
 })
