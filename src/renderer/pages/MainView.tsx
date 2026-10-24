@@ -1,10 +1,10 @@
-import { CircleAlertIcon, ImageIcon, SettingsIcon } from 'lucide-react'
+import { CircleAlertIcon, SettingsIcon } from 'lucide-react'
 import { type JSX, useEffect, useRef, useState } from 'react'
 import { CandidateViewer } from '@/components/CandidateViewer'
+import { NoCandidate } from '@/components/NoCandidate'
 import { PromptForm } from '@/components/PromptForm'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import type { CandidateHistory } from '@/types'
 
 type MainViewProps = {
@@ -109,15 +109,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
             onAccept={(c) => window.bridge.accept(c)}
           />
         ) : (
-          <Empty className="border">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <ImageIcon />
-              </EmptyMedia>
-              <EmptyTitle>No Candidate yet</EmptyTitle>
-              <EmptyDescription>Enter a Prompt and press Generate.</EmptyDescription>
-            </EmptyHeader>
-          </Empty>
+          <NoCandidate />
         )}
       </div>
     </main>
