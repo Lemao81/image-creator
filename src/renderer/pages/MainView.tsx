@@ -1,7 +1,6 @@
 import { CircleAlertIcon, ImageIcon, SettingsIcon } from 'lucide-react'
 import { type JSX, useEffect, useRef, useState } from 'react'
-import { CandidateNavigation } from '@/components/CandidateNavigation'
-import { CandidatePreview } from '@/components/CandidatePreview'
+import { CandidateViewer } from '@/components/CandidateViewer'
 import { PromptForm } from '@/components/PromptForm'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -102,17 +101,13 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
           </Alert>
         )}
         {candidate ? (
-          <div className="flex flex-col items-start gap-4">
-            <CandidatePreview candidate={candidate} />
-            <CandidateNavigation
-              shown={history.shown}
-              count={history.candidates.length}
-              onShow={(o) => setHistory((h) => showOffset(h, o))}
-            />
-            <Button onClick={() => window.bridge.accept(candidate).catch(console.error)}>
-              Accept
-            </Button>
-          </div>
+          <CandidateViewer
+            candidate={candidate}
+            shown={history.shown}
+            count={history.candidates.length}
+            onShow={(o) => setHistory((h) => showOffset(h, o))}
+            onAccept={(c) => window.bridge.accept(c)}
+          />
         ) : (
           <Empty className="border">
             <EmptyHeader>
