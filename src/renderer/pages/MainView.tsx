@@ -1,10 +1,10 @@
-import { CircleAlertIcon, SettingsIcon } from 'lucide-react'
+import { CircleAlertIcon } from 'lucide-react'
 import { type JSX, useEffect, useRef, useState } from 'react'
 import { CandidateViewer } from '@/components/CandidateViewer'
+import { MainHeader } from '@/components/MainHeader'
 import { NoCandidate } from '@/components/NoCandidate'
 import { PromptForm } from '@/components/PromptForm'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
 import type { CandidateHistory } from '@/types'
 
 type MainViewProps = {
@@ -86,11 +86,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
 
   return (
     <main className="flex flex-col">
-      <header className="flex items-center justify-end p-2">
-        <Button variant="ghost" size="icon" aria-label="Settings" onClick={onOpenSettings}>
-          <SettingsIcon />
-        </Button>
-      </header>
+      <MainHeader onOpenSettings={onOpenSettings} />
       <div className="flex flex-col gap-6 px-6 py-4">
         <PromptForm startedAt={startedAt} onGenerate={handleGenerate} onCancel={handleCancel} />
         {error && (
