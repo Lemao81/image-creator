@@ -1,13 +1,11 @@
 import { CircleAlertIcon, ImageIcon, SettingsIcon } from 'lucide-react'
-import { type JSX, type KeyboardEvent, type SubmitEvent, useEffect, useRef, useState } from 'react'
+import { type JSX, useEffect, useRef, useState } from 'react'
 import { CandidateNavigation } from '@/components/CandidateNavigation'
 import { CandidatePreview } from '@/components/CandidatePreview'
-import { GenerationProgress } from '@/components/GenerationProgress'
+import { PromptForm } from '@/components/PromptForm'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Textarea } from '@/components/ui/textarea'
 import type { CandidateHistory } from '@/types'
 
 type MainViewProps = {
@@ -28,13 +26,11 @@ function isTextField(target: EventTarget | null): boolean {
 }
 
 export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
-  const [prompt, setPrompt] = useState('')
   const [history, setHistory] = useState<CandidateHistory>({ candidates: [], shown: 0 })
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
   const runningGeneration = useRef<number | null>(null)
   const candidate = history.candidates.at(history.shown)
-  const canGenerate = prompt.trim() !== '' && startedAt === null
 
   useEffect(() => {
     function handleKeyDown(event: globalThis.KeyboardEvent): void {
@@ -54,8 +50,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  async function handleSubmit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
-    event.preventDefault()
+  async function handleGenerate(prompt: string): Promise<void> {
     const generation = Date.now()
     runningGeneration.current = generation
     setStartedAt(generation)
@@ -84,17 +79,6 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     }
   }
 
-  function handlePromptKeyDown(event: KeyboardEvent<HTMLTextAreaElement>): void {
-    if (!event.ctrlKey || event.key !== 'Enter') {
-      return
-    }
-
-    event.preventDefault()
-    if (canGenerate) {
-      event.currentTarget.form?.requestSubmit()
-    }
-  }
-
   async function handleCancel(): Promise<void> {
     runningGeneration.current = null
     setStartedAt(null)
@@ -109,37 +93,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
         </Button>
       </header>
       <div className="flex flex-col gap-6 px-6 py-4">
-        <form onSubmit={(e) => handleSubmit(e).catch(console.error)}>
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="prompt">Prompt</FieldLabel>
-              <Textarea
-                id="prompt"
-                value={prompt}
-                placeholder="A watercolour fox in a snowy forest"
-                onChange={(e) => setPrompt(e.target.value)}
-                onKeyDown={handlePromptKeyDown}
-              />
-            </Field>
-            <Field orientation="horizontal">
-              <Button type="submit" disabled={!canGenerate}>
-                Generate
-              </Button>
-              {startedAt !== null && (
-                <>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => handleCancel().catch(console.error)}
-                  >
-                    Cancel
-                  </Button>
-                  <GenerationProgress startedAt={startedAt} />
-                </>
-              )}
-            </Field>
-          </FieldGroup>
-        </form>
+        <PromptForm startedAt={startedAt} onGenerate={handleGenerate} onCancel={handleCancel} />
         {error && (
           <Alert variant="destructive">
             <CircleAlertIcon />
