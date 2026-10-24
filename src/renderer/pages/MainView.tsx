@@ -8,15 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Textarea } from '@/components/ui/textarea'
-import type { Candidate } from '~/types'
+import type { CandidateHistory } from '@/types'
 
 type MainViewProps = {
   onOpenSettings: () => void
-}
-
-type CandidateHistory = {
-  candidates: Candidate[]
-  shown: number
 }
 
 function showOffset(history: CandidateHistory, offset: number): CandidateHistory {
