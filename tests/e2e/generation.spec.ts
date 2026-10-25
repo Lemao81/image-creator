@@ -9,7 +9,7 @@ import {
 } from './fake-image-api'
 import { expect, test } from './fixtures'
 import { generate, openMainView } from './generation-helpers'
-import { saveDialogShown, stubSaveDialog } from './save-dialog-helpers'
+import { saveDialogOptions, saveDialogShown, stubSaveDialog } from './save-dialog-helpers'
 import { saveSettings } from './settings-helpers'
 
 const prompt = 'A watercolour fox in a snowy forest'
@@ -70,6 +70,25 @@ test('accept cancelled', async ({ app, window, fakeImageApi, userDataDir }) => {
   const files = await readdir(userDataDir)
   expect(files.filter((f) => path.extname(f) === '.png')).toEqual([])
 })
+
+for (const [name, candidatePrompt, defaultPath] of [
+  ['slug', 'A watercolour Fox, in "snow"!', 'a-watercolour-fox-in-snow.png'],
+  [
+    'long slug',
+    'A watercolour fox in a snowy forest at dusk with northern lights',
+    'a-watercolour-fox-in-a-snowy-forest-at-dusk-with.png',
+  ],
+]) {
+  test(`accept prefills the ${name} as filename`, async ({ app, window, fakeImageApi }) => {
+    await stubSaveDialog(app, undefined)
+    await openMainView(window, fakeImageApi, 'gpt-image-1')
+    await generate(window, candidatePrompt)
+
+    await window.getByRole('button', { name: 'Accept' }).click()
+
+    await expect.poll(() => saveDialogOptions(app)).toMatchObject({ defaultPath })
+  })
+}
 
 test('running generation shows progress', async ({ window, fakeImageApi }) => {
   await openMainView(window, fakeImageApi, 'gpt-image-1')

@@ -17,4 +17,4 @@
 
 ## Open decisions (ask the user before starting)
 
-- Maximum length of the filename slug (e.g. first 6 words or 50 characters)?
+- Maximum length of the filename slug (e.g. first 6 words or 50 characters)? **Answer:** 50 characters, cut at a word boundary.
