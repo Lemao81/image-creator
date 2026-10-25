@@ -25,6 +25,7 @@ function isTextField(target: EventTarget | null): boolean {
 }
 
 export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
+  const [prompt, setPrompt] = useState('')
   const [history, setHistory] = useState<CandidateHistory>({ candidates: [], shown: 0 })
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -49,14 +50,14 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  async function handleGenerate(prompt: string): Promise<void> {
+  async function handleGenerate(generationPrompt: string): Promise<void> {
     const generation = Date.now()
     runningGeneration.current = generation
     setStartedAt(generation)
     setError(null)
 
     try {
-      const result = await window.bridge.generate(prompt)
+      const result = await window.bridge.generate(generationPrompt)
       if (runningGeneration.current !== generation) {
         return
       }
@@ -88,7 +89,13 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     <main className="flex flex-col">
       <MainHeader onOpenSettings={onOpenSettings} />
       <div className="flex flex-col gap-6 px-6 py-4">
-        <PromptForm startedAt={startedAt} onGenerate={handleGenerate} onCancel={handleCancel} />
+        <PromptForm
+          prompt={prompt}
+          startedAt={startedAt}
+          onPromptChange={setPrompt}
+          onGenerate={handleGenerate}
+          onCancel={handleCancel}
+        />
         {error && (
           <Alert variant="destructive">
             <CircleAlertIcon />
@@ -102,6 +109,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
             shown={history.shown}
             count={history.candidates.length}
             onShow={(o) => setHistory((h) => showOffset(h, o))}
+            onUsePrompt={setPrompt}
             onAccept={(c) => window.bridge.accept(c)}
           />
         ) : (
