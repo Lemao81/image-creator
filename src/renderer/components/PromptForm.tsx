@@ -1,17 +1,24 @@
-import { type JSX, type KeyboardEvent, type SubmitEvent, useState } from 'react'
+import type { JSX, KeyboardEvent, SubmitEvent } from 'react'
 import { GenerationProgress } from '@/components/GenerationProgress'
 import { Button } from '@/components/ui/button'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Textarea } from '@/components/ui/textarea'
 
 type PromptFormProps = {
+  prompt: string
   startedAt: number | null
+  onPromptChange: (prompt: string) => void
   onGenerate: (prompt: string) => Promise<void>
   onCancel: () => Promise<void>
 }
 
-export function PromptForm({ startedAt, onGenerate, onCancel }: PromptFormProps): JSX.Element {
-  const [prompt, setPrompt] = useState('')
+export function PromptForm({
+  prompt,
+  startedAt,
+  onPromptChange,
+  onGenerate,
+  onCancel,
+}: PromptFormProps): JSX.Element {
   const canGenerate = prompt.trim() !== '' && startedAt === null
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>): void {
@@ -39,7 +46,7 @@ export function PromptForm({ startedAt, onGenerate, onCancel }: PromptFormProps)
             id="prompt"
             value={prompt}
             placeholder="A watercolour fox in a snowy forest"
-            onChange={(e) => setPrompt(e.target.value)}
+            onChange={(e) => onPromptChange(e.target.value)}
             onKeyDown={handlePromptKeyDown}
           />
         </Field>

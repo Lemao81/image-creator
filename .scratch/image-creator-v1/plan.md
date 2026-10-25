@@ -33,7 +33,7 @@
 ## [06 Candidate history](issues/06-candidate-history.md)
 
 - [x] 6.1 Add the Candidate history slider with navigation and position
-- [ ] 6.2 Add the Prompt caption and "use this prompt"
+- [x] 6.2 Add the Prompt caption and "use this prompt"
 
 ## [07 Filename and remembered Save folder](issues/07-filename-and-save-folder.md)
 

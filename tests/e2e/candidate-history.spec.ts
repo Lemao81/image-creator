@@ -78,6 +78,38 @@ test('a new candidate is shown while browsing', async ({ window, fakeImageApi })
   await expect(window.getByText('3 / 3')).toBeVisible()
 })
 
+test('the shown candidate has its prompt as caption', async ({ window, fakeImageApi }) => {
+  await generateTwoCandidates(window, fakeImageApi)
+  await expect(window.getByText(secondPrompt, { exact: true })).toBeVisible()
+
+  await window.getByRole('button', { name: 'Previous Candidate' }).click()
+
+  await expect(window.getByText(firstPrompt, { exact: true })).toBeVisible()
+  await expect(window.getByText(secondPrompt, { exact: true })).toBeHidden()
+})
+
+test('browsing leaves the prompt input unchanged', async ({ window, fakeImageApi }) => {
+  await generateTwoCandidates(window, fakeImageApi)
+  const promptInput = window.getByLabel('Prompt')
+  await promptInput.fill('A draft prompt')
+
+  await window.getByRole('button', { name: 'Previous Candidate' }).click()
+
+  await expect(window.getByText('1 / 2')).toBeVisible()
+  await expect(promptInput).toHaveValue('A draft prompt')
+})
+
+test('use this prompt replaces the prompt input', async ({ window, fakeImageApi }) => {
+  await generateTwoCandidates(window, fakeImageApi)
+  const promptInput = window.getByLabel('Prompt')
+  await promptInput.fill('A draft prompt')
+  await window.getByRole('button', { name: 'Previous Candidate' }).click()
+
+  await window.getByRole('button', { name: 'Use this prompt' }).click()
+
+  await expect(promptInput).toHaveValue(firstPrompt)
+})
+
 test('accept writes the shown candidate', async ({ app, window, fakeImageApi, userDataDir }) => {
   const filePath = path.join(userDataDir, 'accepted.png')
   await stubSaveDialog(app, filePath)

@@ -4,7 +4,7 @@
 
 **Blocked by:** 03 Generate and Accept tracer bullet.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [ ] A new Candidate is appended to the Candidate history and shown.
 - [ ] Previous and next navigate the Candidates; the position is shown (e.g. 3 / 7).
