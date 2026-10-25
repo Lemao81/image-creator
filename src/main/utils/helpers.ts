@@ -9,3 +9,20 @@ export function errorMessage(error: unknown): string {
 
   return error.cause instanceof Error ? `${error.message}: ${error.cause.message}` : error.message
 }
+
+const maxSlugLength = 50
+
+export function filenameSlug(prompt: string): string {
+  const words = prompt.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []
+  let slug = ''
+  for (const word of words) {
+    const extended = slug ? `${slug}-${word}` : word
+    if (extended.length > maxSlugLength) {
+      break
+    }
+
+    slug = extended
+  }
+
+  return slug || (words[0]?.slice(0, maxSlugLength) ?? 'candidate')
+}
