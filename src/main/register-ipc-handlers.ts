@@ -6,19 +6,21 @@ import { testConnection } from './ipc-handlers/connection-test'
 import { cancelGeneration, generate } from './ipc-handlers/generation'
 import { loadProviderSettings, saveProviderSettings } from './ipc-handlers/settings-store'
 
-export function registerIpcHandlers(): void {
+export function registerIpcHandlers(fakeProvider: boolean): void {
   ipcMain.handle(IpcChannel.loadProviderSettings, () => loadProviderSettings())
   ipcMain.handle(IpcChannel.saveProviderSettings, (_event, update: ProviderSettingsUpdate) =>
     saveProviderSettings(update),
   )
 
   ipcMain.handle(IpcChannel.testConnection, (_event, update: ProviderSettingsUpdate) =>
-    testConnection(update),
+    testConnection(update, fakeProvider),
   )
 
-  ipcMain.handle(IpcChannel.generate, (_event, prompt: string) => generate(prompt))
+  ipcMain.handle(IpcChannel.generate, (_event, prompt: string) => generate(prompt, fakeProvider))
   ipcMain.handle(IpcChannel.cancelGeneration, () => cancelGeneration())
   ipcMain.handle(IpcChannel.accept, (event, candidate: Candidate) =>
     accept(BrowserWindow.fromWebContents(event.sender), candidate),
   )
+
+  ipcMain.handle(IpcChannel.isFakeProvider, () => fakeProvider)
 }

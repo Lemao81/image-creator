@@ -5,4 +5,5 @@ export const IpcChannel = {
   generate: 'generation:start',
   cancelGeneration: 'generation:cancel',
   accept: 'candidate:accept',
+  isFakeProvider: 'app:is-fake-provider',
 } as const

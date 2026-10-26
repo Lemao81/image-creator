@@ -1,3 +1,4 @@
+import { mkdirSync } from 'node:fs'
 import path from 'node:path'
 import { app, BrowserWindow } from 'electron'
 import started from 'electron-squirrel-startup'
@@ -7,7 +8,14 @@ if (started) {
   app.quit()
 }
 
-registerIpcHandlers()
+const fakeProvider = !app.isPackaged && app.commandLine.hasSwitch('fake-provider')
+if (fakeProvider) {
+  const userDataDir = path.join(app.getPath('userData'), 'fake-provider')
+  mkdirSync(userDataDir, { recursive: true })
+  app.setPath('userData', userDataDir)
+}
+
+registerIpcHandlers(fakeProvider)
 
 function loadRenderer(window: BrowserWindow): Promise<void> {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {

@@ -9,6 +9,10 @@ import {
 } from '@playwright/test'
 import { type FakeImageApi, startFakeImageApi } from './fake-image-api'
 
+type Options = {
+  appArgs: string[]
+}
+
 type Fixtures = {
   fakeImageApi: FakeImageApi
   userDataDir: string
@@ -24,11 +28,12 @@ type RelaunchedApp = {
 
 const appRoot = path.join(__dirname, '..', '..')
 
-function launchApp(userDataDir: string): Promise<ElectronApplication> {
-  return electron.launch({ args: [appRoot, `--user-data-dir=${userDataDir}`] })
+function launchApp(userDataDir: string, appArgs: string[]): Promise<ElectronApplication> {
+  return electron.launch({ args: [appRoot, `--user-data-dir=${userDataDir}`, ...appArgs] })
 }
 
-export const test = base.extend<Fixtures>({
+export const test = base.extend<Options & Fixtures>({
+  appArgs: [[], { option: true }],
   fakeImageApi: async ({}, use) => {
     const api = await startFakeImageApi()
     await use(api)
@@ -39,19 +44,19 @@ export const test = base.extend<Fixtures>({
     await use(directory)
     await rm(directory, { recursive: true, force: true })
   },
-  app: async ({ userDataDir }, use) => {
-    const app = await launchApp(userDataDir)
+  app: async ({ userDataDir, appArgs }, use) => {
+    const app = await launchApp(userDataDir, appArgs)
     await use(app)
     await app.close()
   },
   window: async ({ app }, use) => {
     await use(await app.firstWindow())
   },
-  relaunch: async ({ app, userDataDir }, use) => {
+  relaunch: async ({ app, userDataDir, appArgs }, use) => {
     let current = app
     await use(async () => {
       await current.close()
-      current = await launchApp(userDataDir)
+      current = await launchApp(userDataDir, appArgs)
 
       return { app: current, window: await current.firstWindow() }
     })
