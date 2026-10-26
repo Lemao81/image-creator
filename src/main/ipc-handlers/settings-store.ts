@@ -81,3 +81,15 @@ export async function saveProviderSettings(
 
   return toProviderSettings(provider)
 }
+
+export async function loadSaveFolder(): Promise<string | undefined> {
+  const { saveFolder } = await readSettings()
+
+  return saveFolder
+}
+
+export async function storeSaveFolder(saveFolder: string): Promise<void> {
+  const settings = await readSettings()
+
+  await writeSettings({ ...settings, saveFolder })
+}

@@ -14,7 +14,12 @@ type Fixtures = {
   userDataDir: string
   app: ElectronApplication
   window: Page
-  relaunch: () => Promise<Page>
+  relaunch: () => Promise<RelaunchedApp>
+}
+
+type RelaunchedApp = {
+  app: ElectronApplication
+  window: Page
 }
 
 const appRoot = path.join(__dirname, '..', '..')
@@ -48,7 +53,7 @@ export const test = base.extend<Fixtures>({
       await current.close()
       current = await launchApp(userDataDir)
 
-      return current.firstWindow()
+      return { app: current, window: await current.firstWindow() }
     })
 
     await current.close()

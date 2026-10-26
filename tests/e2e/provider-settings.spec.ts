@@ -25,7 +25,7 @@ test('settings navigation', async ({ window }) => {
 test('settings restored', async ({ window, relaunch }) => {
   await saveSettings(window, settings)
 
-  const relaunched = await relaunch()
+  const { window: relaunched } = await relaunch()
   await openSettings(relaunched)
   await expect(relaunched.getByLabel('Base URL')).toHaveValue(settings.baseUrl)
   await expect(relaunched.getByLabel('Model')).toHaveValue(settings.model)
@@ -45,7 +45,7 @@ test('empty api key kept', async ({ window, relaunch }) => {
   await saveSettings(window, settings)
   await saveSettings(window, { ...settings, apiKey: '', model: 'dall-e-3' })
 
-  const relaunched = await relaunch()
+  const { window: relaunched } = await relaunch()
   await openSettings(relaunched)
   await expect(relaunched.getByLabel('Model')).toHaveValue('dall-e-3')
   await expect(relaunched.getByText('An API key is set')).toBeVisible()
