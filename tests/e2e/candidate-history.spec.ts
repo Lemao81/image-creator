@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-import type { Page } from '@playwright/test'
+import type { Locator, Page } from '@playwright/test'
 import { type FakeImageApi, fixtureImagePaths } from './fake-image-api'
 import { expect, test } from './fixtures'
 import { generate, openMainView } from './generation-helpers'
@@ -13,6 +13,10 @@ async function generateTwoCandidates(window: Page, fakeImageApi: FakeImageApi): 
   await openMainView(window, fakeImageApi, 'gpt-image-1')
   await generate(window, firstPrompt)
   await generate(window, secondPrompt)
+}
+
+function caption(window: Page, prompt: string): Locator {
+  return window.getByRole('paragraph').filter({ hasText: prompt })
 }
 
 test('new candidates are appended and shown', async ({ window, fakeImageApi }) => {
@@ -80,12 +84,12 @@ test('a new candidate is shown while browsing', async ({ window, fakeImageApi })
 
 test('the shown candidate has its prompt as caption', async ({ window, fakeImageApi }) => {
   await generateTwoCandidates(window, fakeImageApi)
-  await expect(window.getByText(secondPrompt, { exact: true })).toBeVisible()
+  await expect(caption(window, secondPrompt)).toBeVisible()
 
   await window.getByRole('button', { name: 'Previous Candidate' }).click()
 
-  await expect(window.getByText(firstPrompt, { exact: true })).toBeVisible()
-  await expect(window.getByText(secondPrompt, { exact: true })).toBeHidden()
+  await expect(caption(window, firstPrompt)).toBeVisible()
+  await expect(caption(window, secondPrompt)).toBeHidden()
 })
 
 test('browsing leaves the prompt input unchanged', async ({ window, fakeImageApi }) => {
