@@ -21,7 +21,7 @@ export type FakeImageApi = {
 const fixtureImageNames = ['candidate.png', 'other-candidate.png']
 
 export const fixtureImagePaths = fixtureImageNames.map((n) =>
-  path.join(__dirname, 'fixture-images', n),
+  path.join(__dirname, '..', '..', 'fixtures', 'images', n),
 )
 
 export const fakeApiKey = 'sk-test'

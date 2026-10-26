@@ -45,3 +45,7 @@ _Avoid_: Image type, extension
 **Provider settings**:
 The persisted connection details for the image API: base URL, API key and model.
 _Avoid_: API config, credentials, connection
+
+**Fake Provider**:
+A stand-in for the image API, switched on at app start for manual testing: every Generation succeeds with a stock image, whatever the Prompt and Provider settings.
+_Avoid_: Demo mode, mock mode, offline mode

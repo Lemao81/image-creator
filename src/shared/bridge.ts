@@ -13,4 +13,5 @@ export type Bridge = {
   generate: (prompt: string) => Promise<GenerationResult>
   cancelGeneration: () => Promise<void>
   accept: (candidate: Candidate) => Promise<void>
+  isFakeProvider: () => Promise<boolean>
 }
