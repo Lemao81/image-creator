@@ -1,4 +1,4 @@
-import { readdir, readFile } from 'node:fs/promises'
+import { mkdtemp, readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import type { Page } from '@playwright/test'
 import {
@@ -89,6 +89,44 @@ for (const [name, candidatePrompt, defaultPath] of [
     await expect.poll(() => saveDialogOptions(app)).toMatchObject({ defaultPath })
   })
 }
+
+test('accept opens in the last save folder', async ({ app, window, fakeImageApi, userDataDir }) => {
+  const saveFolder = await mkdtemp(path.join(userDataDir, 'outputs-'))
+  await stubSaveDialog(app, path.join(saveFolder, 'first.png'))
+  await openMainView(window, fakeImageApi, 'gpt-image-1')
+  await generate(window, prompt)
+  await window.getByRole('button', { name: 'Accept' }).click()
+  await expect.poll(() => readdir(saveFolder)).toEqual(['first.png'])
+
+  await stubSaveDialog(app, undefined)
+  await window.getByRole('button', { name: 'Accept' }).click()
+
+  await expect
+    .poll(() => saveDialogOptions(app))
+    .toMatchObject({
+      defaultPath: path.join(saveFolder, 'a-watercolour-fox-in-a-snowy-forest.png'),
+    })
+})
+
+test('save folder restored', async ({ app, window, fakeImageApi, userDataDir, relaunch }) => {
+  const saveFolder = await mkdtemp(path.join(userDataDir, 'outputs-'))
+  await stubSaveDialog(app, path.join(saveFolder, 'first.png'))
+  await openMainView(window, fakeImageApi, 'gpt-image-1')
+  await generate(window, prompt)
+  await window.getByRole('button', { name: 'Accept' }).click()
+  await expect.poll(() => readdir(saveFolder)).toEqual(['first.png'])
+
+  const relaunched = await relaunch()
+  await stubSaveDialog(relaunched.app, undefined)
+  await generate(relaunched.window, otherPrompt)
+  await relaunched.window.getByRole('button', { name: 'Accept' }).click()
+
+  await expect
+    .poll(() => saveDialogOptions(relaunched.app))
+    .toMatchObject({
+      defaultPath: path.join(saveFolder, 'a-pencil-sketch-of-a-lighthouse-at-dusk.png'),
+    })
+})
 
 test('running generation shows progress', async ({ window, fakeImageApi }) => {
   await openMainView(window, fakeImageApi, 'gpt-image-1')

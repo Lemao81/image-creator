@@ -38,7 +38,7 @@
 ## [07 Filename and remembered Save folder](issues/07-filename-and-save-folder.md)
 
 - [x] 7.1 Prefill the Save dialog with the filename slug
-- [ ] 7.2 Remember the last Save folder across restarts
+- [x] 7.2 Remember the last Save folder across restarts
 
 ## [08 Output size](issues/08-output-size.md)
 

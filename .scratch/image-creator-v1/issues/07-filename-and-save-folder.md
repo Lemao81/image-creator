@@ -4,7 +4,7 @@
 
 **Blocked by:** 03 Generate and Accept tracer bullet.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [ ] The default filename is the Prompt as lower-case words joined by hyphens, stripped of characters invalid in filenames, plus the extension.
 - [ ] The Save dialog opens in the last Save folder; the folder is persisted and restored after relaunch.

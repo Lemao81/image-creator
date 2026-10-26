@@ -6,6 +6,7 @@ export type StoredProviderSettings = {
 
 export type StoredSettings = {
   provider?: StoredProviderSettings
+  saveFolder?: string
 }
 
 export type DecryptedProviderSettings = {
