@@ -17,4 +17,9 @@ export type Candidate = {
   prompt: string
 }
 
+export type OutputSize = {
+  width: number
+  height: number
+}
+
 export type GenerationResult = { ok: true; candidate: Candidate } | { ok: false; message: string }

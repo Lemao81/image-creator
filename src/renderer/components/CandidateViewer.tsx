@@ -9,6 +9,7 @@ type CandidateViewerProps = {
   candidate: Candidate
   shown: number
   count: number
+  canAccept: boolean
   onShow: (offset: number) => void
   onUsePrompt: (prompt: string) => void
   onAccept: (candidate: Candidate) => Promise<void>
@@ -18,6 +19,7 @@ export function CandidateViewer({
   candidate,
   shown,
   count,
+  canAccept,
   onShow,
   onUsePrompt,
   onAccept,
@@ -27,7 +29,9 @@ export function CandidateViewer({
       <CandidatePreview candidate={candidate} />
       <CandidateCaption prompt={candidate.prompt} onUsePrompt={onUsePrompt} />
       <CandidateNavigation shown={shown} count={count} onShow={onShow} />
-      <Button onClick={() => onAccept(candidate).catch(console.error)}>Accept</Button>
+      <Button disabled={!canAccept} onClick={() => onAccept(candidate).catch(console.error)}>
+        Accept
+      </Button>
     </div>
   )
 }

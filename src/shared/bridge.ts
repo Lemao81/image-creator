@@ -2,6 +2,7 @@ import type {
   Candidate,
   ConnectionTestResult,
   GenerationResult,
+  OutputSize,
   ProviderSettings,
   ProviderSettingsUpdate,
 } from './types'
@@ -14,4 +15,6 @@ export type Bridge = {
   cancelGeneration: () => Promise<void>
   accept: (candidate: Candidate) => Promise<void>
   isFakeProvider: () => Promise<boolean>
+  loadOutputSize: () => Promise<OutputSize | null>
+  storeOutputSize: (size: OutputSize) => Promise<void>
 }

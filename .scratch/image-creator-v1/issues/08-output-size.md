@@ -22,7 +22,7 @@
 3. 📦 Add the image library and crop and resize the Output file on Accept, with end-to-end tests.
 4. Add the live crop preview and the upscaling warning, with end-to-end tests.
 
-## Open decisions (ask the user before starting)
+## Decisions
 
-- Image library: `sharp` (fast, native binary that must be unpacked from the asar archive when packaging) or a pure-JS library such as `jimp` (slower, no native packaging issues)?
-- Which models go into the size table initially (e.g. gpt-image-1, gpt-image-1-mini, dall-e-3, dall-e-2)?
+- Image library: `sharp`, unpacked from the asar archive when packaging.
+- Initial size table: gpt-image-1 and gpt-image-1-mini (1024×1024, 1536×1024, 1024×1536), dall-e-3 (1024×1024, 1792×1024, 1024×1792), dall-e-2 (256×256, 512×512, 1024×1024).
