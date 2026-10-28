@@ -1,5 +1,6 @@
 import { SettingsIcon } from 'lucide-react'
 import { type JSX, useEffect, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
 type MainHeaderProps = {
@@ -15,11 +16,7 @@ export function MainHeader({ onOpenSettings }: MainHeaderProps): JSX.Element {
 
   return (
     <header className="flex items-center gap-2 p-2">
-      {fakeProvider && (
-        <span className="rounded-md bg-muted px-2 py-1 font-medium text-muted-foreground text-xs">
-          Fake Provider
-        </span>
-      )}
+      {fakeProvider && <Badge variant="secondary">Fake Provider</Badge>}
       <Button
         variant="ghost"
         size="icon"
