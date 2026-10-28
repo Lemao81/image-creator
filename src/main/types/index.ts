@@ -1,3 +1,5 @@
+import type { OutputSize } from '~/types'
+
 export type StoredProviderSettings = {
   baseUrl: string
   model: string
@@ -7,6 +9,7 @@ export type StoredProviderSettings = {
 export type StoredSettings = {
   provider?: StoredProviderSettings
   saveFolder?: string
+  outputSize?: OutputSize
 }
 
 export type DecryptedProviderSettings = {

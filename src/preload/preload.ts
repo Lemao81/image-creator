@@ -10,6 +10,8 @@ const bridge: Bridge = {
   cancelGeneration: () => ipcRenderer.invoke(IpcChannel.cancelGeneration),
   accept: (c) => ipcRenderer.invoke(IpcChannel.accept, c),
   isFakeProvider: () => ipcRenderer.invoke(IpcChannel.isFakeProvider),
+  loadOutputSize: () => ipcRenderer.invoke(IpcChannel.loadOutputSize),
+  storeOutputSize: (s) => ipcRenderer.invoke(IpcChannel.storeOutputSize, s),
 }
 
 contextBridge.exposeInMainWorld('bridge', bridge)
