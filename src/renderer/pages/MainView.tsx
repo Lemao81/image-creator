@@ -8,9 +8,7 @@ import { PromptForm } from '@/components/PromptForm'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import type { CandidateHistory, OutputSizeInput } from '@/types'
 import { parseOutputSize } from '@/utils/helpers'
-import type { OutputSize } from '~/types'
-
-const defaultOutputSize: OutputSize = { width: 1024, height: 1024 }
+import { defaultOutputSize } from '~/constants'
 
 type MainViewProps = {
   onOpenSettings: () => void
