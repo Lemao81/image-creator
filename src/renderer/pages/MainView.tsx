@@ -6,9 +6,8 @@ import { NoCandidate } from '@/components/NoCandidate'
 import { OutputSizeFields } from '@/components/OutputSizeFields'
 import { PromptForm } from '@/components/PromptForm'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import type { CandidateHistory, OutputSizeInput } from '@/types'
-import { parseOutputSize } from '@/utils/helpers'
-import { defaultOutputSize } from '~/constants'
+import { useOutputSize } from '@/hooks/use-output-size'
+import type { CandidateHistory } from '@/types'
 
 type MainViewProps = {
   onOpenSettings: () => void
@@ -32,20 +31,9 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   const [history, setHistory] = useState<CandidateHistory>({ candidates: [], shown: 0 })
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [outputSize, setOutputSize] = useState<OutputSizeInput | null>(null)
   const runningGeneration = useRef<number | null>(null)
+  const outputSize = useOutputSize()
   const candidate = history.candidates.at(history.shown)
-  const canAccept = outputSize !== null && parseOutputSize(outputSize) !== null
-
-  useEffect(() => {
-    async function restoreOutputSize(): Promise<void> {
-      const stored = await window.bridge.loadOutputSize()
-      const size = stored ?? defaultOutputSize
-      setOutputSize({ width: String(size.width), height: String(size.height) })
-    }
-
-    restoreOutputSize().catch(console.error)
-  }, [])
 
   useEffect(() => {
     function handleKeyDown(event: globalThis.KeyboardEvent): void {
@@ -94,14 +82,6 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     }
   }
 
-  function handleOutputSizeChange(size: OutputSizeInput): void {
-    setOutputSize(size)
-    const parsed = parseOutputSize(size)
-    if (parsed) {
-      window.bridge.storeOutputSize(parsed).catch(console.error)
-    }
-  }
-
   async function handleCancel(): Promise<void> {
     runningGeneration.current = null
     setStartedAt(null)
@@ -119,7 +99,9 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
           onGenerate={handleGenerate}
           onCancel={handleCancel}
         />
-        {outputSize && <OutputSizeFields size={outputSize} onSizeChange={handleOutputSizeChange} />}
+        {outputSize.input && (
+          <OutputSizeFields size={outputSize.input} onSizeChange={outputSize.change} />
+        )}
         {error && (
           <Alert variant="destructive">
             <CircleAlertIcon />
@@ -132,7 +114,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
             candidate={candidate}
             shown={history.shown}
             count={history.candidates.length}
-            canAccept={canAccept}
+            canAccept={outputSize.size !== null}
             onShow={(o) => setHistory((h) => showOffset(h, o))}
             onUsePrompt={setPrompt}
             onAccept={(c) => window.bridge.accept(c)}
