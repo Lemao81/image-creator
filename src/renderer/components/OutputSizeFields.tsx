@@ -1,8 +1,8 @@
 import type { JSX } from 'react'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { parseSizeValue } from '@/lib/output-size'
 import type { OutputSizeInput } from '@/types'
+import { parseSizeValue } from '@/utils/helpers'
 import { maxOutputSize, outputSizePresets } from '~/constants'
 
 type OutputSizeFieldsProps = {
