@@ -1,6 +1,19 @@
+import { ChevronDownIcon } from 'lucide-react'
 import type { JSX } from 'react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group'
 import type { OutputSizeInput } from '@/types'
 import { parseSizeValue } from '@/utils/helpers'
 import { maxOutputSize, outputSizePresets } from '~/constants'
@@ -17,22 +30,39 @@ type SizeFieldProps = {
   onValueChange: (value: string) => void
 }
 
-const presetsListId = 'output-size-presets'
-
 function SizeField({ id, label, value, onValueChange }: SizeFieldProps): JSX.Element {
   const invalid = parseSizeValue(value) === null
 
   return (
-    <Field data-invalid={invalid}>
+    <Field data-invalid={invalid} className="w-36">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <Input
-        id={id}
-        value={value}
-        list={presetsListId}
-        inputMode="numeric"
-        aria-invalid={invalid}
-        onChange={(e) => onValueChange(e.target.value)}
-      />
+      <InputGroup>
+        <InputGroupInput
+          id={id}
+          value={value}
+          inputMode="numeric"
+          aria-invalid={invalid}
+          onChange={(e) => onValueChange(e.target.value)}
+        />
+        <InputGroupAddon align="inline-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={<InputGroupButton size="icon-xs" aria-label={`${label} presets`} />}
+            >
+              <ChevronDownIcon />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuRadioGroup value={value} onValueChange={(v) => onValueChange(String(v))}>
+                {outputSizePresets.map((p) => (
+                  <DropdownMenuRadioItem key={p} value={String(p)} closeOnClick>
+                    {p}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </InputGroupAddon>
+      </InputGroup>
       {invalid && <FieldError>Enter a whole number from 1 to {maxOutputSize}</FieldError>}
     </Field>
   )
@@ -53,11 +83,6 @@ export function OutputSizeFields({ size, onSizeChange }: OutputSizeFieldsProps):
         value={size.height}
         onValueChange={(h) => onSizeChange({ ...size, height: h })}
       />
-      <datalist id={presetsListId}>
-        {outputSizePresets.map((p) => (
-          <option key={p} value={p} />
-        ))}
-      </datalist>
     </FieldGroup>
   )
 }
