@@ -54,13 +54,17 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   }, [])
 
   async function handleGenerate(generationPrompt: string): Promise<void> {
+    if (!outputSize.size) {
+      return
+    }
+
     const generation = Date.now()
     runningGeneration.current = generation
     setStartedAt(generation)
     setError(null)
 
     try {
-      const result = await window.bridge.generate(generationPrompt)
+      const result = await window.bridge.generate(generationPrompt, outputSize.size)
       if (runningGeneration.current !== generation) {
         return
       }
@@ -95,6 +99,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
         <PromptForm
           prompt={prompt}
           startedAt={startedAt}
+          hasOutputSize={outputSize.size !== null}
           onPromptChange={setPrompt}
           onGenerate={handleGenerate}
           onCancel={handleCancel}

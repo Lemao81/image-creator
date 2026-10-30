@@ -95,6 +95,39 @@ for (const value of ['0', '4097', '12.5', 'abc', '']) {
   })
 }
 
+for (const [model, width, height, size] of [
+  ['gpt-image-1', '1024', '1024', '1024x1024'],
+  ['gpt-image-1', '512', '256', '1536x1024'],
+  ['gpt-image-1-mini', '256', '512', '1024x1536'],
+  ['dall-e-3', '1920', '1080', '1792x1024'],
+  ['dall-e-3', '300', '400', '1024x1792'],
+  ['dall-e-2', '128', '128', '256x256'],
+  ['dall-e-2', '300', '200', '512x512'],
+  ['dall-e-2', '2048', '2048', '1024x1024'],
+  ['my-image-model', '512', '256', '1024x1024'],
+]) {
+  test(`generation size for ${model} at ${width}x${height}`, async ({ window, fakeImageApi }) => {
+    await openMainView(window, fakeImageApi, model)
+    await widthField(window).fill(width)
+    await heightField(window).fill(height)
+
+    await generate(window, prompt)
+
+    expect(fakeImageApi.generationRequests).toMatchObject([{ body: { model, size } }])
+  })
+}
+
+test('invalid output size blocks generate', async ({ window, fakeImageApi }) => {
+  await openMainView(window, fakeImageApi, 'gpt-image-1')
+  await window.getByLabel('Prompt').fill(prompt)
+
+  await widthField(window).fill('0')
+  await expect(window.getByRole('button', { name: 'Generate' })).toBeDisabled()
+
+  await widthField(window).fill('512')
+  await expect(window.getByRole('button', { name: 'Generate' })).toBeEnabled()
+})
+
 test('output size restored', async ({ window, fakeImageApi, userDataDir, relaunch }) => {
   await openMainView(window, fakeImageApi, 'gpt-image-1')
   await widthField(window).fill('512')

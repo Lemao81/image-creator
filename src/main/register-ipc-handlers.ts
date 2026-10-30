@@ -21,7 +21,10 @@ export function registerIpcHandlers(fakeProvider: boolean): void {
     testConnection(update, fakeProvider),
   )
 
-  ipcMain.handle(IpcChannel.generate, (_event, prompt: string) => generate(prompt, fakeProvider))
+  ipcMain.handle(IpcChannel.generate, (_event, prompt: string, outputSize: OutputSize) =>
+    generate(prompt, outputSize, fakeProvider),
+  )
+
   ipcMain.handle(IpcChannel.cancelGeneration, () => cancelGeneration())
   ipcMain.handle(IpcChannel.accept, (event, candidate: Candidate) =>
     accept(BrowserWindow.fromWebContents(event.sender), candidate),
