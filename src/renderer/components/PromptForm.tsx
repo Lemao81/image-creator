@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 type PromptFormProps = {
   prompt: string
   startedAt: number | null
+  hasOutputSize: boolean
   onPromptChange: (prompt: string) => void
   onGenerate: (prompt: string) => Promise<void>
   onCancel: () => Promise<void>
@@ -15,11 +16,12 @@ type PromptFormProps = {
 export function PromptForm({
   prompt,
   startedAt,
+  hasOutputSize,
   onPromptChange,
   onGenerate,
   onCancel,
 }: PromptFormProps): JSX.Element {
-  const canGenerate = prompt.trim() !== '' && startedAt === null
+  const canGenerate = prompt.trim() !== '' && startedAt === null && hasOutputSize
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>): void {
     event.preventDefault()

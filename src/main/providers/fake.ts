@@ -1,5 +1,6 @@
 import { setTimeout } from 'node:timers/promises'
 import type { ImageProvider } from '#/types'
+import type { OutputSize } from '~/types'
 import candidateImage from '../../../fixtures/images/candidate.png?inline'
 import otherCandidateImage from '../../../fixtures/images/other-candidate.png?inline'
 
@@ -12,7 +13,11 @@ const images = [candidateImage, otherCandidateImage].map((d) =>
 let generationCount = 0
 
 export function createFakeProvider(): ImageProvider {
-  async function generate(_prompt: string, signal: AbortSignal): Promise<Uint8Array<ArrayBuffer>> {
+  async function generate(
+    _prompt: string,
+    _outputSize: OutputSize,
+    signal: AbortSignal,
+  ): Promise<Uint8Array<ArrayBuffer>> {
     await setTimeout(generationDelayMs, undefined, { signal })
     const image = images[generationCount % images.length]
     generationCount += 1

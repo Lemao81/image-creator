@@ -43,7 +43,7 @@
 ## [08 Output size](issues/08-output-size.md)
 
 - [x] 8.1 Add the width and height combo boxes with coupling and persistence
-- [ ] 8.2 Choose the generation size from the model size table
+- [x] 8.2 Choose the generation size from the model size table
 - [ ] 8.3 📦 Add the image library and crop and resize on Accept
 - [ ] 8.4 Add the live crop preview and the upscaling warning
 
