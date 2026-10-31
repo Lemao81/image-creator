@@ -1,9 +1,9 @@
-import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import type { Locator, Page } from '@playwright/test'
 import { type FakeImageApi, fixtureImagePaths } from './fake-image-api'
 import { expect, test } from './fixtures'
 import { generate, openMainView } from './generation-helpers'
+import { imagePixels } from './image-helpers'
 import { stubSaveDialog } from './save-dialog-helpers'
 
 const firstPrompt = 'A watercolour fox in a snowy forest'
@@ -122,8 +122,8 @@ test('accept writes the shown candidate', async ({ app, window, fakeImageApi, us
 
   await window.getByRole('button', { name: 'Accept' }).click()
 
-  const firstImage = await readFile(fixtureImagePaths[0])
-  await expect.poll(() => readFile(filePath).catch(() => null)).toEqual(firstImage)
+  const firstPixels = await imagePixels(fixtureImagePaths[0])
+  await expect.poll(() => imagePixels(filePath)).toEqual(firstPixels)
   await expect(window.getByRole('img', { name: firstPrompt })).toBeVisible()
   await expect(window.getByText('1 / 2')).toBeVisible()
 })

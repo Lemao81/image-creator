@@ -8,6 +8,7 @@ import { PromptForm } from '@/components/PromptForm'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useOutputSize } from '@/hooks/use-output-size'
 import type { CandidateHistory } from '@/types'
+import type { Candidate } from '~/types'
 
 type MainViewProps = {
   onOpenSettings: () => void
@@ -86,6 +87,12 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     }
   }
 
+  async function handleAccept(accepted: Candidate): Promise<void> {
+    if (outputSize.size) {
+      await window.bridge.accept(accepted, outputSize.size)
+    }
+  }
+
   async function handleCancel(): Promise<void> {
     runningGeneration.current = null
     setStartedAt(null)
@@ -122,7 +129,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
             canAccept={outputSize.size !== null}
             onShow={(o) => setHistory((h) => showOffset(h, o))}
             onUsePrompt={setPrompt}
-            onAccept={(c) => window.bridge.accept(c)}
+            onAccept={handleAccept}
           />
         ) : (
           <NoCandidate />

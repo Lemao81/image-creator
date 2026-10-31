@@ -1,4 +1,4 @@
-import { mkdtemp, readdir, readFile } from 'node:fs/promises'
+import { mkdtemp, readdir } from 'node:fs/promises'
 import path from 'node:path'
 import type { Page } from '@playwright/test'
 import {
@@ -9,6 +9,7 @@ import {
 } from './fake-image-api'
 import { expect, test } from './fixtures'
 import { generate, openMainView } from './generation-helpers'
+import { imagePixels } from './image-helpers'
 import { saveDialogOptions, saveDialogShown, stubSaveDialog } from './save-dialog-helpers'
 import { saveSettings } from './settings-helpers'
 
@@ -56,8 +57,8 @@ test('accept writes the candidate', async ({ app, window, fakeImageApi, userData
 
   await window.getByRole('button', { name: 'Accept' }).click()
 
-  const fixtureImage = await readFile(fixtureImagePaths[0])
-  await expect.poll(() => readFile(filePath).catch(() => null)).toEqual(fixtureImage)
+  const fixturePixels = await imagePixels(fixtureImagePaths[0])
+  await expect.poll(() => imagePixels(filePath)).toEqual(fixturePixels)
 })
 
 test('accept cancelled', async ({ app, window, fakeImageApi, userDataDir }) => {

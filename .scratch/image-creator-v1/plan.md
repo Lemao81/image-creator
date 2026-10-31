@@ -44,7 +44,7 @@
 
 - [x] 8.1 Add the width and height combo boxes with coupling and persistence
 - [x] 8.2 Choose the generation size from the model size table
-- [ ] 8.3 📦 Add the image library and crop and resize on Accept
+- [x] 8.3 📦 Add the image library and crop and resize on Accept
 - [ ] 8.4 Add the live crop preview and the upscaling warning
 
 ## [09 JPEG, WebP and transparent background](issues/09-jpeg-webp-and-transparency.md)
