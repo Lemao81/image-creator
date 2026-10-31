@@ -3,6 +3,8 @@ import path from 'node:path'
 import type { Locator, Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { generate, openMainView } from './generation-helpers'
+import { imageInfo } from './image-helpers'
+import { stubSaveDialog } from './save-dialog-helpers'
 
 const prompt = 'A watercolour fox in a snowy forest'
 const sizeError = 'Enter a whole number from 1 to 4096'
@@ -114,6 +116,34 @@ for (const [model, width, height, size] of [
     await generate(window, prompt)
 
     expect(fakeImageApi.generationRequests).toMatchObject([{ body: { model, size } }])
+  })
+}
+
+for (const [width, height] of [
+  ['1024', '1024'],
+  ['512', '256'],
+  ['300', '200'],
+  ['16', '16'],
+  ['2048', '1536'],
+]) {
+  test(`accept writes the output size ${width}x${height}`, async ({
+    app,
+    window,
+    fakeImageApi,
+    userDataDir,
+  }) => {
+    const filePath = path.join(userDataDir, 'accepted.png')
+    await stubSaveDialog(app, filePath)
+    await openMainView(window, fakeImageApi, 'gpt-image-1')
+    await generate(window, prompt)
+    await widthField(window).fill(width)
+    await heightField(window).fill(height)
+
+    await window.getByRole('button', { name: 'Accept' }).click()
+
+    await expect
+      .poll(() => imageInfo(filePath))
+      .toEqual({ format: 'png', width: Number(width), height: Number(height) })
   })
 }
 

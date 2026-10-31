@@ -26,8 +26,8 @@ export function registerIpcHandlers(fakeProvider: boolean): void {
   )
 
   ipcMain.handle(IpcChannel.cancelGeneration, () => cancelGeneration())
-  ipcMain.handle(IpcChannel.accept, (event, candidate: Candidate) =>
-    accept(BrowserWindow.fromWebContents(event.sender), candidate),
+  ipcMain.handle(IpcChannel.accept, (event, candidate: Candidate, outputSize: OutputSize) =>
+    accept(BrowserWindow.fromWebContents(event.sender), candidate, outputSize),
   )
 
   ipcMain.handle(IpcChannel.isFakeProvider, () => fakeProvider)
