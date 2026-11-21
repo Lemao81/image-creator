@@ -126,7 +126,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
             candidate={candidate}
             shown={history.shown}
             count={history.candidates.length}
-            canAccept={outputSize.size !== null}
+            outputSize={outputSize.size}
             onShow={(o) => setHistory((h) => showOffset(h, o))}
             onUsePrompt={setPrompt}
             onAccept={handleAccept}

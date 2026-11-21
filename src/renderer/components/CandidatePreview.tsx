@@ -1,23 +1,30 @@
-import { type JSX, useEffect, useState } from 'react'
-import type { Candidate } from '~/types'
+import type { JSX } from 'react'
+import type { CandidateImage } from '@/types'
+import { cropScale } from '@/utils/helpers'
+import type { OutputSize } from '~/types'
 
 type CandidatePreviewProps = {
-  candidate: Candidate
+  image: CandidateImage
+  prompt: string
+  outputSize: OutputSize | null
 }
 
-export function CandidatePreview({ candidate }: CandidatePreviewProps): JSX.Element | null {
-  const [url, setUrl] = useState<string | null>(null)
-
-  useEffect(() => {
-    const objectUrl = URL.createObjectURL(new Blob([candidate.image]))
-    setUrl(objectUrl)
-
-    return () => URL.revokeObjectURL(objectUrl)
-  }, [candidate])
-
-  if (!url) {
-    return null
+export function CandidatePreview({
+  image,
+  prompt,
+  outputSize,
+}: CandidatePreviewProps): JSX.Element {
+  const style = outputSize && {
+    width: outputSize.width * cropScale(image, outputSize),
+    aspectRatio: `${outputSize.width} / ${outputSize.height}`,
   }
 
-  return <img src={url} alt={candidate.prompt} className="max-w-full rounded-lg" />
+  return (
+    <img
+      src={image.url}
+      alt={prompt}
+      style={style ?? undefined}
+      className="max-w-full rounded-lg object-cover"
+    />
+  )
 }

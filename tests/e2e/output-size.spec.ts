@@ -17,6 +17,12 @@ function heightField(window: Page): Locator {
   return window.getByLabel('Height', { exact: true })
 }
 
+async function previewAspectRatio(window: Page): Promise<number | null> {
+  const box = await window.getByRole('img', { name: prompt }).boundingBox()
+
+  return box && box.width / box.height
+}
+
 async function storedOutputSize(userDataDir: string): Promise<unknown> {
   const file = await readFile(path.join(userDataDir, 'settings.json'), 'utf8')
 
@@ -146,6 +152,35 @@ for (const [width, height] of [
       .toEqual({ format: 'png', width: Number(width), height: Number(height) })
   })
 }
+
+test('preview cropped to output size', async ({ window, fakeImageApi }) => {
+  await openMainView(window, fakeImageApi, 'gpt-image-1')
+  await generate(window, prompt)
+  await expect.poll(() => previewAspectRatio(window)).toBeCloseTo(1)
+
+  await widthField(window).fill('512')
+  await heightField(window).fill('256')
+  await expect.poll(() => previewAspectRatio(window)).toBeCloseTo(2)
+
+  await heightField(window).fill('1024')
+  await expect.poll(() => previewAspectRatio(window)).toBeCloseTo(0.5)
+})
+
+test('upscaling warning', async ({ window, fakeImageApi }) => {
+  const warning = window.getByText('Output will be upscaled')
+  await openMainView(window, fakeImageApi, 'gpt-image-1')
+  await generate(window, prompt)
+  await expect(warning).toBeHidden()
+
+  await heightField(window).fill('1100')
+  await expect(warning).toBeVisible()
+
+  await widthField(window).fill('2048')
+  await expect(warning).toBeVisible()
+
+  await widthField(window).fill('16')
+  await expect(warning).toBeHidden()
+})
 
 test('invalid output size blocks generate', async ({ window, fakeImageApi }) => {
   await openMainView(window, fakeImageApi, 'gpt-image-1')

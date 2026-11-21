@@ -1,4 +1,4 @@
-import type { OutputSizeInput } from '@/types'
+import type { CandidateImage, OutputSizeInput } from '@/types'
 import { maxOutputSize } from '~/constants'
 import type { OutputSize } from '~/types'
 
@@ -19,4 +19,8 @@ export function parseOutputSize({ width, height }: OutputSizeInput): OutputSize 
   return parsedWidth !== null && parsedHeight !== null
     ? { width: parsedWidth, height: parsedHeight }
     : null
+}
+
+export function cropScale(image: CandidateImage, outputSize: OutputSize): number {
+  return Math.min(image.width / outputSize.width, image.height / outputSize.height)
 }

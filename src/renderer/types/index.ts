@@ -15,3 +15,9 @@ export type OutputSizeState = {
   size: OutputSize | null
   change: (input: OutputSizeInput) => void
 }
+
+export type CandidateImage = {
+  url: string
+  width: number
+  height: number
+}

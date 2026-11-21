@@ -4,7 +4,7 @@
 
 **Blocked by:** 03 Generate and Accept tracer bullet.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [ ] Width and height offer presets 16, 32, 48, 64, 128, 256, 512, 768, 1024, 1536, 2048 and accept typed integers 1–4096; invalid input is flagged and blocks Accept.
 - [ ] Changing the width always sets the height to the same value.
