@@ -15,3 +15,10 @@ test-results/
 playwright-report/
 ANSWERS.md
 IDEAS.md
+RETRO.md
+.notes.local.txt
+/maestro-output/
+/test-results/
+/playwright-report/
+/blob-report/
+/tests/e2e/.auth/

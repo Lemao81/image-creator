@@ -26,6 +26,9 @@
   },
   "linter": {
     "rules": {
+      "correctness": {
+        "noUnusedImports": { "level": "on", "fix": "safe" }
+      },
       "style": {
         "useBlockStatements": "error",
         "useConsistentArrowReturn": { "level": "error", "options": { "style": "asNeeded" } },
@@ -62,6 +65,9 @@
         "rules": {
           "correctness": {
             "noEmptyPattern": "off"
+          },
+          "suspicious": {
+            "noConfusingVoidType": "off"
           }
         }
       }
