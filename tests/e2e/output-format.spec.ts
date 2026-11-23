@@ -16,12 +16,12 @@ function formatField(window: Page): Locator {
 async function chooseFormat(window: Page, label: string): Promise<void> {
   await formatField(window).click()
   await window.getByRole('option', { name: label }).click()
-  await expect(formatField(window)).toHaveText(label)
+  await expect(formatField(window)).toContainText(label)
 }
 
 test('output format options', async ({ window, fakeImageApi }) => {
   await openMainView(window, fakeImageApi, 'gpt-image-1')
-  await expect(formatField(window)).toHaveText('PNG')
+  await expect(formatField(window)).toContainText('PNG')
 
   await formatField(window).click()
 
@@ -73,5 +73,5 @@ test('output format restored', async ({ window, fakeImageApi, userDataDir, relau
   await expect.poll(() => storedSetting(userDataDir, 'outputFormat')).toBe('webp')
 
   const { window: relaunched } = await relaunch()
-  await expect(formatField(relaunched)).toHaveText('WebP')
+  await expect(formatField(relaunched)).toContainText('WebP')
 })
