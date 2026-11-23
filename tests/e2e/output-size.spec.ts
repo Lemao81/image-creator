@@ -1,10 +1,10 @@
-import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import type { Locator, Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { generate, openMainView } from './generation-helpers'
 import { imageInfo } from './image-helpers'
 import { stubSaveDialog } from './save-dialog-helpers'
+import { storedSetting } from './settings-helpers'
 
 const prompt = 'A watercolour fox in a snowy forest'
 const sizeError = 'Enter a whole number from 1 to 4096'
@@ -21,12 +21,6 @@ async function previewAspectRatio(window: Page): Promise<number | null> {
   const box = await window.getByRole('img', { name: prompt }).boundingBox()
 
   return box && box.width / box.height
-}
-
-async function storedOutputSize(userDataDir: string): Promise<unknown> {
-  const file = await readFile(path.join(userDataDir, 'settings.json'), 'utf8')
-
-  return (JSON.parse(file) as { outputSize?: unknown }).outputSize
 }
 
 test('default output size', async ({ window, fakeImageApi }) => {
@@ -197,7 +191,9 @@ test('output size restored', async ({ window, fakeImageApi, userDataDir, relaunc
   await openMainView(window, fakeImageApi, 'gpt-image-1')
   await widthField(window).fill('512')
   await heightField(window).fill('256')
-  await expect.poll(() => storedOutputSize(userDataDir)).toEqual({ width: 512, height: 256 })
+  await expect
+    .poll(() => storedSetting(userDataDir, 'outputSize'))
+    .toEqual({ width: 512, height: 256 })
 
   const { window: relaunched } = await relaunch()
   await expect(widthField(relaunched)).toHaveValue('512')

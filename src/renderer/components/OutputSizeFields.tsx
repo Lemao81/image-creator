@@ -7,7 +7,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import {
   InputGroup,
   InputGroupAddon,
@@ -70,7 +70,7 @@ function SizeField({ id, label, value, onValueChange }: SizeFieldProps): JSX.Ele
 
 export function OutputSizeFields({ size, onSizeChange }: OutputSizeFieldsProps): JSX.Element {
   return (
-    <FieldGroup className="flex-row items-start">
+    <>
       <SizeField
         id="output-width"
         label="Width"
@@ -83,6 +83,6 @@ export function OutputSizeFields({ size, onSizeChange }: OutputSizeFieldsProps):
         value={size.height}
         onValueChange={(h) => onSizeChange({ ...size, height: h })}
       />
-    </FieldGroup>
+    </>
   )
 }

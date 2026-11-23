@@ -1,4 +1,4 @@
-import type { Candidate, OutputSize } from '~/types'
+import type { Candidate, OutputFormat, OutputSize } from '~/types'
 
 export type CandidateHistory = {
   candidates: Candidate[]
@@ -14,6 +14,11 @@ export type OutputSizeState = {
   input: OutputSizeInput | null
   size: OutputSize | null
   change: (input: OutputSizeInput) => void
+}
+
+export type OutputFormatState = {
+  format: OutputFormat | null
+  change: (format: OutputFormat) => void
 }
 
 export type CandidateImage = {

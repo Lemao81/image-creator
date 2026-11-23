@@ -3,9 +3,12 @@ import { type JSX, useEffect, useRef, useState } from 'react'
 import { CandidateViewer } from '@/components/CandidateViewer'
 import { MainHeader } from '@/components/MainHeader'
 import { NoCandidate } from '@/components/NoCandidate'
+import { OutputFormatField } from '@/components/OutputFormatField'
 import { OutputSizeFields } from '@/components/OutputSizeFields'
 import { PromptForm } from '@/components/PromptForm'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { FieldGroup } from '@/components/ui/field'
+import { useOutputFormat } from '@/hooks/use-output-format'
 import { useOutputSize } from '@/hooks/use-output-size'
 import type { CandidateHistory } from '@/types'
 import type { Candidate } from '~/types'
@@ -34,6 +37,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   const [error, setError] = useState<string | null>(null)
   const runningGeneration = useRef<number | null>(null)
   const outputSize = useOutputSize()
+  const outputFormat = useOutputFormat()
   const candidate = history.candidates.at(history.shown)
 
   useEffect(() => {
@@ -88,8 +92,8 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   }
 
   async function handleAccept(accepted: Candidate): Promise<void> {
-    if (outputSize.size) {
-      await window.bridge.accept(accepted, outputSize.size)
+    if (outputSize.size && outputFormat.format) {
+      await window.bridge.accept(accepted, outputSize.size, outputFormat.format)
     }
   }
 
@@ -111,9 +115,14 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
           onGenerate={handleGenerate}
           onCancel={handleCancel}
         />
-        {outputSize.input && (
-          <OutputSizeFields size={outputSize.input} onSizeChange={outputSize.change} />
-        )}
+        <FieldGroup className="flex-row flex-wrap items-start">
+          {outputSize.input && (
+            <OutputSizeFields size={outputSize.input} onSizeChange={outputSize.change} />
+          )}
+          {outputFormat.format && (
+            <OutputFormatField format={outputFormat.format} onFormatChange={outputFormat.change} />
+          )}
+        </FieldGroup>
         {error && (
           <Alert variant="destructive">
             <CircleAlertIcon />

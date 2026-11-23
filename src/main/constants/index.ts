@@ -1,4 +1,5 @@
-import type { GenerationSize } from '#/types'
+import type { GenerationSize, OutputFormatFile } from '#/types'
+import type { OutputFormat } from '~/types'
 
 export const modelGenerationSizes: Record<string, GenerationSize[]> = {
   'gpt-image-1': [
@@ -24,3 +25,9 @@ export const modelGenerationSizes: Record<string, GenerationSize[]> = {
 }
 
 export const defaultGenerationSize: GenerationSize = { width: 1024, height: 1024 }
+
+export const outputFormatFiles: Record<OutputFormat, OutputFormatFile> = {
+  png: { extension: 'png', filterName: 'PNG image' },
+  jpeg: { extension: 'jpg', filterName: 'JPEG image' },
+  webp: { extension: 'webp', filterName: 'WebP image' },
+}

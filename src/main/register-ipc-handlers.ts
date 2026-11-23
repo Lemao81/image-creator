@@ -1,13 +1,15 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import { IpcChannel } from '~/constants'
-import type { Candidate, OutputSize, ProviderSettingsUpdate } from '~/types'
+import type { Candidate, OutputFormat, OutputSize, ProviderSettingsUpdate } from '~/types'
 import { accept } from './ipc-handlers/acceptance'
 import { testConnection } from './ipc-handlers/connection-test'
 import { cancelGeneration, generate } from './ipc-handlers/generation'
 import {
+  loadOutputFormat,
   loadOutputSize,
   loadProviderSettings,
   saveProviderSettings,
+  storeOutputFormat,
   storeOutputSize,
 } from './ipc-handlers/settings-store'
 
@@ -26,12 +28,19 @@ export function registerIpcHandlers(fakeProvider: boolean): void {
   )
 
   ipcMain.handle(IpcChannel.cancelGeneration, () => cancelGeneration())
-  ipcMain.handle(IpcChannel.accept, (event, candidate: Candidate, outputSize: OutputSize) =>
-    accept(BrowserWindow.fromWebContents(event.sender), candidate, outputSize),
+  ipcMain.handle(
+    IpcChannel.accept,
+    (event, candidate: Candidate, outputSize: OutputSize, outputFormat: OutputFormat) =>
+      accept(BrowserWindow.fromWebContents(event.sender), candidate, outputSize, outputFormat),
   )
 
   ipcMain.handle(IpcChannel.isFakeProvider, () => fakeProvider)
 
   ipcMain.handle(IpcChannel.loadOutputSize, () => loadOutputSize())
   ipcMain.handle(IpcChannel.storeOutputSize, (_event, size: OutputSize) => storeOutputSize(size))
+
+  ipcMain.handle(IpcChannel.loadOutputFormat, () => loadOutputFormat())
+  ipcMain.handle(IpcChannel.storeOutputFormat, (_event, format: OutputFormat) =>
+    storeOutputFormat(format),
+  )
 }

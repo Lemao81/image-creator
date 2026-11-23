@@ -1,4 +1,4 @@
-import type { OutputSize } from '~/types'
+import type { OutputFormat, OutputSize } from '~/types'
 
 export type StoredProviderSettings = {
   baseUrl: string
@@ -10,6 +10,7 @@ export type StoredSettings = {
   provider?: StoredProviderSettings
   saveFolder?: string
   outputSize?: OutputSize
+  outputFormat?: OutputFormat
 }
 
 export type DecryptedProviderSettings = {
@@ -30,4 +31,9 @@ export type ImageProvider = {
     signal: AbortSignal,
   ) => Promise<Uint8Array<ArrayBuffer>>
   testConnection: () => Promise<void>
+}
+
+export type OutputFormatFile = {
+  extension: string
+  filterName: string
 }

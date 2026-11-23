@@ -8,10 +8,12 @@ const bridge: Bridge = {
   testConnection: (u) => ipcRenderer.invoke(IpcChannel.testConnection, u),
   generate: (p, s) => ipcRenderer.invoke(IpcChannel.generate, p, s),
   cancelGeneration: () => ipcRenderer.invoke(IpcChannel.cancelGeneration),
-  accept: (c, s) => ipcRenderer.invoke(IpcChannel.accept, c, s),
+  accept: (c, s, f) => ipcRenderer.invoke(IpcChannel.accept, c, s, f),
   isFakeProvider: () => ipcRenderer.invoke(IpcChannel.isFakeProvider),
   loadOutputSize: () => ipcRenderer.invoke(IpcChannel.loadOutputSize),
   storeOutputSize: (s) => ipcRenderer.invoke(IpcChannel.storeOutputSize, s),
+  loadOutputFormat: () => ipcRenderer.invoke(IpcChannel.loadOutputFormat),
+  storeOutputFormat: (f) => ipcRenderer.invoke(IpcChannel.storeOutputFormat, f),
 }
 
 contextBridge.exposeInMainWorld('bridge', bridge)

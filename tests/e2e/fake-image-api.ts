@@ -15,10 +15,15 @@ export type FakeImageApi = {
   abortedGenerationRequests: GenerationRequest[]
   holdGenerations: () => () => void
   failNextGeneration: (status: number, message: string) => void
+  serveTransparentImages: () => void
   stop: () => Promise<void>
 }
 
-const fixtureImageNames = ['candidate.png', 'other-candidate.png']
+const rotatingImageNames = ['candidate.png', 'other-candidate.png']
+
+const transparentImageName = 'transparent-candidate.png'
+
+const fixtureImageNames = [...rotatingImageNames, transparentImageName]
 
 export const fixtureImagePaths = fixtureImageNames.map((n) =>
   path.join(__dirname, '..', '..', 'fixtures', 'images', n),
@@ -45,12 +50,17 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
   const abortedGenerationRequests: GenerationRequest[] = []
   let heldGenerations: Promise<void> | null = null
   let nextGenerationFailure: { status: number; message: string } | null = null
+  let transparentImages = false
 
   async function handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
     if (request.method === 'POST' && request.url === '/images/generations') {
       const body = (await json(request)) as Record<string, unknown>
       const generationRequest = { authorization: request.headers.authorization, body }
-      const fixtureIndex = generationRequests.length % fixtureImages.length
+      const imageName = transparentImages
+        ? transparentImageName
+        : rotatingImageNames[generationRequests.length % rotatingImageNames.length]
+
+      const fixtureIndex = fixtureImageNames.indexOf(imageName)
       generationRequests.push(generationRequest)
       response.on('close', () => {
         if (!response.writableFinished) {
@@ -72,7 +82,7 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
       }
 
       const image = String(body.model).startsWith('dall-e')
-        ? { url: `${baseUrl}/files/${fixtureImageNames[fixtureIndex]}` }
+        ? { url: `${baseUrl}/files/${imageName}` }
         : { b64_json: fixtureImages[fixtureIndex].toString('base64') }
 
       sendJson(response, { created: Math.floor(Date.now() / 1000), data: [image] })
@@ -131,6 +141,9 @@ export async function startFakeImageApi(): Promise<FakeImageApi> {
     },
     failNextGeneration: (status, message) => {
       nextGenerationFailure = { status, message }
+    },
+    serveTransparentImages: () => {
+      transparentImages = true
     },
     stop: () =>
       new Promise((resolve, reject) => {

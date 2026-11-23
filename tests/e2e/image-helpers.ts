@@ -20,3 +20,13 @@ export async function imageInfo(filePath: string): Promise<ImageInfo | null> {
 
   return metadata && { format: metadata.format, width: metadata.width, height: metadata.height }
 }
+
+export async function pixelAt(filePath: string, x: number, y: number): Promise<number[]> {
+  const pixel = await sharp(filePath)
+    .extract({ left: x, top: y, width: 1, height: 1 })
+    .removeAlpha()
+    .raw()
+    .toBuffer()
+
+  return [...pixel]
+}

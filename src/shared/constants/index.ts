@@ -1,4 +1,4 @@
-import type { OutputSize } from '~/types'
+import type { OutputFormat, OutputSize } from '~/types'
 
 export const IpcChannel = {
   loadProviderSettings: 'provider-settings:load',
@@ -10,6 +10,8 @@ export const IpcChannel = {
   isFakeProvider: 'app:is-fake-provider',
   loadOutputSize: 'output-size:load',
   storeOutputSize: 'output-size:store',
+  loadOutputFormat: 'output-format:load',
+  storeOutputFormat: 'output-format:store',
 } as const
 
 export const outputSizePresets = [16, 32, 48, 64, 128, 256, 512, 768, 1024, 1536, 2048]
@@ -17,3 +19,11 @@ export const outputSizePresets = [16, 32, 48, 64, 128, 256, 512, 768, 1024, 1536
 export const maxOutputSize = 4096
 
 export const defaultOutputSize: OutputSize = { width: 1024, height: 1024 }
+
+export const outputFormatLabels: Record<OutputFormat, string> = {
+  png: 'PNG',
+  jpeg: 'JPEG',
+  webp: 'WebP',
+}
+
+export const defaultOutputFormat: OutputFormat = 'png'

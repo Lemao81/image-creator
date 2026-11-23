@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { app, safeStorage } from 'electron'
 import type { DecryptedProviderSettings, StoredProviderSettings, StoredSettings } from '#/types'
-import type { OutputSize, ProviderSettings, ProviderSettingsUpdate } from '~/types'
+import type { OutputFormat, OutputSize, ProviderSettings, ProviderSettingsUpdate } from '~/types'
 
 function settingsFilePath(): string {
   return path.join(app.getPath('userData'), 'settings.json')
@@ -104,4 +104,16 @@ export async function storeOutputSize(outputSize: OutputSize): Promise<void> {
   const settings = await readSettings()
 
   await writeSettings({ ...settings, outputSize })
+}
+
+export async function loadOutputFormat(): Promise<OutputFormat | null> {
+  const { outputFormat } = await readSettings()
+
+  return outputFormat ?? null
+}
+
+export async function storeOutputFormat(outputFormat: OutputFormat): Promise<void> {
+  const settings = await readSettings()
+
+  await writeSettings({ ...settings, outputFormat })
 }
