@@ -35,13 +35,20 @@ export function createOpenAiCompatibleProvider({
   async function generate(
     prompt: string,
     outputSize: OutputSize,
+    transparentBackground: boolean,
     signal: AbortSignal,
   ): Promise<Uint8Array<ArrayBuffer>> {
     const { width, height } = generationSize(model, outputSize)
     const response = await fetch(endpoint(baseUrl, '/images/generations'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({ model, prompt, n: 1, size: `${width}x${height}` }),
+      body: JSON.stringify({
+        model,
+        prompt,
+        n: 1,
+        size: `${width}x${height}`,
+        ...(transparentBackground && { background: 'transparent' }),
+      }),
       signal,
     })
 

@@ -16,6 +16,7 @@ export function createFakeProvider(): ImageProvider {
   async function generate(
     _prompt: string,
     _outputSize: OutputSize,
+    _transparentBackground: boolean,
     signal: AbortSignal,
   ): Promise<Uint8Array<ArrayBuffer>> {
     await setTimeout(generationDelayMs, undefined, { signal })

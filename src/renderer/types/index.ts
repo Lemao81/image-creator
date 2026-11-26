@@ -21,6 +21,11 @@ export type OutputFormatState = {
   change: (format: OutputFormat) => void
 }
 
+export type TransparentBackgroundState = {
+  enabled: boolean | null
+  change: (enabled: boolean) => void
+}
+
 export type CandidateImage = {
   url: string
   width: number

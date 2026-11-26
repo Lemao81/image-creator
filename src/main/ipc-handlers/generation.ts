@@ -8,6 +8,7 @@ let runningGeneration: AbortController | null = null
 export async function generate(
   prompt: string,
   outputSize: OutputSize,
+  transparentBackground: boolean,
   fakeProvider: boolean,
 ): Promise<GenerationResult> {
   const controller = new AbortController()
@@ -15,7 +16,12 @@ export async function generate(
 
   try {
     const provider = await resolveProvider(fakeProvider, loadDecryptedProviderSettings)
-    const image = await provider.generate(prompt, outputSize, controller.signal)
+    const image = await provider.generate(
+      prompt,
+      outputSize,
+      transparentBackground,
+      controller.signal,
+    )
 
     return { ok: true, candidate: { image, prompt } }
   } catch (error) {

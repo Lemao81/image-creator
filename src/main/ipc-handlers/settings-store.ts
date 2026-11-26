@@ -117,3 +117,15 @@ export async function storeOutputFormat(outputFormat: OutputFormat): Promise<voi
 
   await writeSettings({ ...settings, outputFormat })
 }
+
+export async function loadTransparentBackground(): Promise<boolean | null> {
+  const { transparentBackground } = await readSettings()
+
+  return transparentBackground ?? null
+}
+
+export async function storeTransparentBackground(transparentBackground: boolean): Promise<void> {
+  const settings = await readSettings()
+
+  await writeSettings({ ...settings, transparentBackground })
+}

@@ -50,7 +50,7 @@
 ## [09 JPEG, WebP and transparent background](issues/09-jpeg-webp-and-transparency.md)
 
 - [x] 9.1 Add the Output format dropdown with PNG, JPEG and WebP
-- [ ] 9.2 Add the transparent-background checkbox
+- [x] 9.2 Add the transparent-background checkbox
 - [ ] 9.3 Add the JPEG transparency hint
 
 ## [10 ICO output](issues/10-ico-output.md)

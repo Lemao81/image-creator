@@ -6,10 +6,12 @@ import { NoCandidate } from '@/components/NoCandidate'
 import { OutputFormatField } from '@/components/OutputFormatField'
 import { OutputSizeFields } from '@/components/OutputSizeFields'
 import { PromptForm } from '@/components/PromptForm'
+import { TransparentBackgroundField } from '@/components/TransparentBackgroundField'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { FieldGroup } from '@/components/ui/field'
 import { useOutputFormat } from '@/hooks/use-output-format'
 import { useOutputSize } from '@/hooks/use-output-size'
+import { useTransparentBackground } from '@/hooks/use-transparent-background'
 import type { CandidateHistory } from '@/types'
 import type { Candidate } from '~/types'
 
@@ -38,6 +40,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   const runningGeneration = useRef<number | null>(null)
   const outputSize = useOutputSize()
   const outputFormat = useOutputFormat()
+  const transparentBackground = useTransparentBackground()
   const candidate = history.candidates.at(history.shown)
 
   useEffect(() => {
@@ -69,7 +72,12 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     setError(null)
 
     try {
-      const result = await window.bridge.generate(generationPrompt, outputSize.size)
+      const result = await window.bridge.generate(
+        generationPrompt,
+        outputSize.size,
+        transparentBackground.enabled ?? false,
+      )
+
       if (runningGeneration.current !== generation) {
         return
       }
@@ -121,6 +129,12 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
           )}
           {outputFormat.format && (
             <OutputFormatField format={outputFormat.format} onFormatChange={outputFormat.change} />
+          )}
+          {transparentBackground.enabled !== null && (
+            <TransparentBackgroundField
+              enabled={transparentBackground.enabled}
+              onEnabledChange={transparentBackground.change}
+            />
           )}
         </FieldGroup>
         {error && (

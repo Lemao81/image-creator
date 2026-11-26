@@ -12,6 +12,8 @@ export const IpcChannel = {
   storeOutputSize: 'output-size:store',
   loadOutputFormat: 'output-format:load',
   storeOutputFormat: 'output-format:store',
+  loadTransparentBackground: 'transparent-background:load',
+  storeTransparentBackground: 'transparent-background:store',
 } as const
 
 export const outputSizePresets = [16, 32, 48, 64, 128, 256, 512, 768, 1024, 1536, 2048]

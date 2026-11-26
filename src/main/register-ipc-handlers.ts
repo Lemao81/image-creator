@@ -8,9 +8,11 @@ import {
   loadOutputFormat,
   loadOutputSize,
   loadProviderSettings,
+  loadTransparentBackground,
   saveProviderSettings,
   storeOutputFormat,
   storeOutputSize,
+  storeTransparentBackground,
 } from './ipc-handlers/settings-store'
 
 export function registerIpcHandlers(fakeProvider: boolean): void {
@@ -23,8 +25,10 @@ export function registerIpcHandlers(fakeProvider: boolean): void {
     testConnection(update, fakeProvider),
   )
 
-  ipcMain.handle(IpcChannel.generate, (_event, prompt: string, outputSize: OutputSize) =>
-    generate(prompt, outputSize, fakeProvider),
+  ipcMain.handle(
+    IpcChannel.generate,
+    (_event, prompt: string, outputSize: OutputSize, transparentBackground: boolean) =>
+      generate(prompt, outputSize, transparentBackground, fakeProvider),
   )
 
   ipcMain.handle(IpcChannel.cancelGeneration, () => cancelGeneration())
@@ -42,5 +46,10 @@ export function registerIpcHandlers(fakeProvider: boolean): void {
   ipcMain.handle(IpcChannel.loadOutputFormat, () => loadOutputFormat())
   ipcMain.handle(IpcChannel.storeOutputFormat, (_event, format: OutputFormat) =>
     storeOutputFormat(format),
+  )
+
+  ipcMain.handle(IpcChannel.loadTransparentBackground, () => loadTransparentBackground())
+  ipcMain.handle(IpcChannel.storeTransparentBackground, (_event, transparentBackground: boolean) =>
+    storeTransparentBackground(transparentBackground),
   )
 }

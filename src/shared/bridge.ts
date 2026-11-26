@@ -12,7 +12,11 @@ export type Bridge = {
   loadProviderSettings: () => Promise<ProviderSettings | null>
   saveProviderSettings: (update: ProviderSettingsUpdate) => Promise<ProviderSettings>
   testConnection: (update: ProviderSettingsUpdate) => Promise<ConnectionTestResult>
-  generate: (prompt: string, outputSize: OutputSize) => Promise<GenerationResult>
+  generate: (
+    prompt: string,
+    outputSize: OutputSize,
+    transparentBackground: boolean,
+  ) => Promise<GenerationResult>
   cancelGeneration: () => Promise<void>
   accept: (
     candidate: Candidate,
@@ -24,4 +28,6 @@ export type Bridge = {
   storeOutputSize: (size: OutputSize) => Promise<void>
   loadOutputFormat: () => Promise<OutputFormat | null>
   storeOutputFormat: (format: OutputFormat) => Promise<void>
+  loadTransparentBackground: () => Promise<boolean | null>
+  storeTransparentBackground: (transparentBackground: boolean) => Promise<void>
 }

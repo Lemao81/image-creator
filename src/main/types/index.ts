@@ -11,6 +11,7 @@ export type StoredSettings = {
   saveFolder?: string
   outputSize?: OutputSize
   outputFormat?: OutputFormat
+  transparentBackground?: boolean
 }
 
 export type DecryptedProviderSettings = {
@@ -28,6 +29,7 @@ export type ImageProvider = {
   generate: (
     prompt: string,
     outputSize: OutputSize,
+    transparentBackground: boolean,
     signal: AbortSignal,
   ) => Promise<Uint8Array<ArrayBuffer>>
   testConnection: () => Promise<void>
