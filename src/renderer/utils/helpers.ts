@@ -24,3 +24,22 @@ export function parseOutputSize({ width, height }: OutputSizeInput): OutputSize 
 export function cropScale(image: CandidateImage, outputSize: OutputSize): number {
   return Math.min(image.width / outputSize.width, image.height / outputSize.height)
 }
+
+export function hasTransparency(bitmap: ImageBitmap): boolean {
+  const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
+  const context = canvas.getContext('2d')
+  if (!context) {
+    return false
+  }
+
+  context.drawImage(bitmap, 0, 0)
+  const { data } = context.getImageData(0, 0, bitmap.width, bitmap.height)
+
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] < 255) {
+      return true
+    }
+  }
+
+  return false
+}

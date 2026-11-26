@@ -51,7 +51,7 @@
 
 - [x] 9.1 Add the Output format dropdown with PNG, JPEG and WebP
 - [x] 9.2 Add the transparent-background checkbox
-- [ ] 9.3 Add the JPEG transparency hint
+- [x] 9.3 Add the JPEG transparency hint
 
 ## [10 ICO output](issues/10-ico-output.md)
 

@@ -67,6 +67,26 @@ test('jpeg flattens transparency', async ({ app, window, fakeImageApi, userDataD
   expect(blue).toBeGreaterThan(160)
 })
 
+test('jpeg transparency hint', async ({ window, fakeImageApi }) => {
+  const hint = window.getByText('JPEG has no transparency')
+  await openMainView(window, fakeImageApi, 'gpt-image-1')
+  await generate(window, prompt)
+  await chooseFormat(window, 'JPEG')
+  await expect(hint).toBeHidden()
+
+  fakeImageApi.serveTransparentImages()
+  await generate(window, 'A glass marble on nothing')
+  await expect(hint).toBeVisible()
+
+  await chooseFormat(window, 'PNG')
+  await expect(hint).toBeHidden()
+
+  await chooseFormat(window, 'JPEG')
+  await window.keyboard.press('ArrowLeft')
+  await expect(window.getByRole('img', { name: prompt })).toBeVisible()
+  await expect(hint).toBeHidden()
+})
+
 test('output format restored', async ({ window, fakeImageApi, userDataDir, relaunch }) => {
   await openMainView(window, fakeImageApi, 'gpt-image-1')
   await chooseFormat(window, 'WebP')

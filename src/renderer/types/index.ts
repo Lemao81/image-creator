@@ -30,4 +30,5 @@ export type CandidateImage = {
   url: string
   width: number
   height: number
+  transparent: boolean
 }

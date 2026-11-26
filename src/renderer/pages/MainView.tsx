@@ -150,6 +150,7 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
             shown={history.shown}
             count={history.candidates.length}
             outputSize={outputSize.size}
+            outputFormat={outputFormat.format}
             onShow={(o) => setHistory((h) => showOffset(h, o))}
             onUsePrompt={setPrompt}
             onAccept={handleAccept}

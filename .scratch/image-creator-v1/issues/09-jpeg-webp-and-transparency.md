@@ -4,7 +4,7 @@
 
 **Blocked by:** 08 Output size.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [ ] An Output format dropdown offers PNG, JPEG and WebP; Accept writes that format with the matching extension.
 - [ ] JPEG Output files have transparent areas flattened onto white.
