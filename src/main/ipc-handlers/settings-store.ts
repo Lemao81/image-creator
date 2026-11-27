@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile, rename, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { app, safeStorage } from 'electron'
 import type { DecryptedProviderSettings, StoredProviderSettings, StoredSettings } from '#/types'
@@ -20,8 +20,29 @@ async function readSettings(): Promise<StoredSettings> {
   }
 }
 
+let pendingUpdate: Promise<unknown> = Promise.resolve()
+
 async function writeSettings(settings: StoredSettings): Promise<void> {
-  await writeFile(settingsFilePath(), JSON.stringify(settings, null, 2))
+  const filePath = settingsFilePath()
+  const temporaryPath = `${filePath}.tmp`
+
+  await writeFile(temporaryPath, JSON.stringify(settings, null, 2))
+  await rename(temporaryPath, filePath)
+}
+
+function updateSettings<Updated extends StoredSettings>(
+  change: (settings: StoredSettings) => Updated,
+): Promise<Updated> {
+  const update = pendingUpdate.then(async () => {
+    const updated = change(await readSettings())
+    await writeSettings(updated)
+
+    return updated
+  })
+
+  pendingUpdate = update.catch(() => undefined)
+
+  return update
 }
 
 function encryptApiKey(apiKey: string): string {
@@ -68,16 +89,15 @@ export async function loadStoredApiKey(): Promise<string> {
 export async function saveProviderSettings(
   update: ProviderSettingsUpdate,
 ): Promise<ProviderSettings> {
-  const settings = await readSettings()
-  const provider: StoredProviderSettings = {
-    baseUrl: update.baseUrl,
-    model: update.model,
-    encryptedApiKey: update.apiKey
-      ? encryptApiKey(update.apiKey)
-      : settings.provider?.encryptedApiKey,
-  }
-
-  await writeSettings({ ...settings, provider })
+  const encryptedApiKey = update.apiKey ? encryptApiKey(update.apiKey) : undefined
+  const { provider } = await updateSettings((s) => ({
+    ...s,
+    provider: {
+      baseUrl: update.baseUrl,
+      model: update.model,
+      encryptedApiKey: encryptedApiKey ?? s.provider?.encryptedApiKey,
+    },
+  }))
 
   return toProviderSettings(provider)
 }
@@ -89,9 +109,7 @@ export async function loadSaveFolder(): Promise<string | undefined> {
 }
 
 export async function storeSaveFolder(saveFolder: string): Promise<void> {
-  const settings = await readSettings()
-
-  await writeSettings({ ...settings, saveFolder })
+  await updateSettings((s) => ({ ...s, saveFolder }))
 }
 
 export async function loadOutputSize(): Promise<OutputSize | null> {
@@ -101,9 +119,7 @@ export async function loadOutputSize(): Promise<OutputSize | null> {
 }
 
 export async function storeOutputSize(outputSize: OutputSize): Promise<void> {
-  const settings = await readSettings()
-
-  await writeSettings({ ...settings, outputSize })
+  await updateSettings((s) => ({ ...s, outputSize }))
 }
 
 export async function loadOutputFormat(): Promise<OutputFormat | null> {
@@ -113,9 +129,7 @@ export async function loadOutputFormat(): Promise<OutputFormat | null> {
 }
 
 export async function storeOutputFormat(outputFormat: OutputFormat): Promise<void> {
-  const settings = await readSettings()
-
-  await writeSettings({ ...settings, outputFormat })
+  await updateSettings((s) => ({ ...s, outputFormat }))
 }
 
 export async function loadTransparentBackground(): Promise<boolean | null> {
@@ -125,7 +139,5 @@ export async function loadTransparentBackground(): Promise<boolean | null> {
 }
 
 export async function storeTransparentBackground(transparentBackground: boolean): Promise<void> {
-  const settings = await readSettings()
-
-  await writeSettings({ ...settings, transparentBackground })
+  await updateSettings((s) => ({ ...s, transparentBackground }))
 }

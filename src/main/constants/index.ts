@@ -30,4 +30,5 @@ export const outputFormatFiles: Record<OutputFormat, OutputFormatFile> = {
   png: { extension: 'png', filterName: 'PNG image' },
   jpeg: { extension: 'jpg', filterName: 'JPEG image' },
   webp: { extension: 'webp', filterName: 'WebP image' },
+  ico: { extension: 'ico', filterName: 'ICO icon' },
 }

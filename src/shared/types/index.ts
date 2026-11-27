@@ -22,6 +22,6 @@ export type OutputSize = {
   height: number
 }
 
-export type OutputFormat = 'png' | 'jpeg' | 'webp'
+export type OutputFormat = 'png' | 'jpeg' | 'webp' | 'ico'
 
 export type GenerationResult = { ok: true; candidate: Candidate } | { ok: false; message: string }

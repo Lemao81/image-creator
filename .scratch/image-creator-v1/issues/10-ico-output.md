@@ -16,6 +16,6 @@
 1. Add ICO to the Output format dropdown with the size constraints, with end-to-end tests.
 2. 📦 Write multi-resolution ICO files on Accept, with end-to-end tests.
 
-## Open decisions (ask the user before starting)
+## Decisions
 
-- When switching to ICO with a width above 256: clamp it to 256 automatically, or flag it as invalid?
+- When switching to ICO with a width above 256, the width and height are clamped to 256 automatically. Typing a value above 256 while ICO is selected shows the usual field error with 256 as the maximum.

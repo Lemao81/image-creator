@@ -13,7 +13,8 @@ import { useOutputFormat } from '@/hooks/use-output-format'
 import { useOutputSize } from '@/hooks/use-output-size'
 import { useTransparentBackground } from '@/hooks/use-transparent-background'
 import type { CandidateHistory } from '@/types'
-import type { Candidate } from '~/types'
+import { icoSizeInput } from '@/utils/helpers'
+import type { Candidate, OutputFormat } from '~/types'
 
 type MainViewProps = {
   onOpenSettings: () => void
@@ -38,8 +39,8 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
   const runningGeneration = useRef<number | null>(null)
-  const outputSize = useOutputSize()
   const outputFormat = useOutputFormat()
+  const outputSize = useOutputSize(outputFormat.format)
   const transparentBackground = useTransparentBackground()
   const candidate = history.candidates.at(history.shown)
 
@@ -99,6 +100,13 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
     }
   }
 
+  function handleFormatChange(format: OutputFormat): void {
+    outputFormat.change(format)
+    if (format === 'ico' && outputSize.input) {
+      outputSize.change(icoSizeInput(outputSize.input))
+    }
+  }
+
   async function handleAccept(accepted: Candidate): Promise<void> {
     if (outputSize.size && outputFormat.format) {
       await window.bridge.accept(accepted, outputSize.size, outputFormat.format)
@@ -125,10 +133,14 @@ export function MainView({ onOpenSettings }: MainViewProps): JSX.Element {
         />
         <FieldGroup className="flex-row flex-wrap items-start">
           {outputSize.input && (
-            <OutputSizeFields size={outputSize.input} onSizeChange={outputSize.change} />
+            <OutputSizeFields
+              size={outputSize.input}
+              format={outputFormat.format}
+              onSizeChange={outputSize.change}
+            />
           )}
           {outputFormat.format && (
-            <OutputFormatField format={outputFormat.format} onFormatChange={outputFormat.change} />
+            <OutputFormatField format={outputFormat.format} onFormatChange={handleFormatChange} />
           )}
           {transparentBackground.enabled !== null && (
             <TransparentBackgroundField

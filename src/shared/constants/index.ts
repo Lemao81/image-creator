@@ -20,12 +20,15 @@ export const outputSizePresets = [16, 32, 48, 64, 128, 256, 512, 768, 1024, 1536
 
 export const maxOutputSize = 4096
 
+export const maxIcoSize = 256
+
 export const defaultOutputSize: OutputSize = { width: 1024, height: 1024 }
 
 export const outputFormatLabels: Record<OutputFormat, string> = {
   png: 'PNG',
   jpeg: 'JPEG',
   webp: 'WebP',
+  ico: 'ICO',
 }
 
 export const defaultOutputFormat: OutputFormat = 'png'

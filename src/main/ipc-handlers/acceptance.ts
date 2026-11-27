@@ -15,6 +15,8 @@ function encode(image: Sharp, outputFormat: OutputFormat): Sharp {
       return image.flatten({ background: '#ffffff' }).jpeg()
     case 'webp':
       return image.webp()
+    case 'ico':
+      throw new Error('ICO output is not available yet')
   }
 }
 

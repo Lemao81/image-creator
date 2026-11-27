@@ -1,21 +1,14 @@
 import path from 'node:path'
-import type { Locator, Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { generate, openMainView } from './generation-helpers'
 import { imageInfo } from './image-helpers'
+import { heightField, widthField } from './output-size-helpers'
 import { stubSaveDialog } from './save-dialog-helpers'
 import { storedSetting } from './settings-helpers'
 
 const prompt = 'A watercolour fox in a snowy forest'
 const sizeError = 'Enter a whole number from 1 to 4096'
-
-function widthField(window: Page): Locator {
-  return window.getByLabel('Width', { exact: true })
-}
-
-function heightField(window: Page): Locator {
-  return window.getByLabel('Height', { exact: true })
-}
 
 async function previewAspectRatio(window: Page): Promise<number | null> {
   const box = await window.getByRole('img', { name: prompt }).boundingBox()

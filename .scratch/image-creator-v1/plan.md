@@ -55,5 +55,5 @@
 
 ## [10 ICO output](issues/10-ico-output.md)
 
-- [ ] 10.1 Add ICO to the Output format dropdown with the size constraints
+- [x] 10.1 Add ICO to the Output format dropdown with the size constraints
 - [ ] 10.2 📦 Write multi-resolution ICO files on Accept
